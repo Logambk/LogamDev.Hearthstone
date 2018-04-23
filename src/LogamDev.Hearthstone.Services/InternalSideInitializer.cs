@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Vo.Card;
 using LogamDev.Hearthstone.Vo.Game;
@@ -16,7 +17,7 @@ namespace LogamDev.Hearthstone.Services
 
         public InternalSide Initialize(PlayerInitializer playerInitializer)
         {
-            return new InternalSide()
+            var state = new InternalSide()
             {
                 Deck = playerInitializer.Deck,
                 Hand = new List<CardBase>(),
@@ -31,6 +32,13 @@ namespace LogamDev.Hearthstone.Services
                     UsedPermanentManaCrystals = 0,
                 }
             };
+
+            foreach (var card in state.Deck)
+            {
+                card.Id = Guid.NewGuid();
+            }
+
+            return state;
         }
     }
 }
