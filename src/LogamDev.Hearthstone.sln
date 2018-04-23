@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogamDev.Hearthstone.Dto", "LogamDev.Hearthstone.Dto\LogamDev.Hearthstone.Dto.csproj", "{6761A499-56B3-47C2-920A-594E801E0BB4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTest", "UnitTest", "{C29B2AAC-E399-47D7-B5FC-CE3CD0BAADDB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogamDev.Hearthstone.Dto.UnitTest", "UnitTest\LogamDev.Hearthstone.Dto.UnitTest\LogamDev.Hearthstone.Dto.UnitTest.csproj", "{F8EE3DEA-77C8-48F3-9D43-E302C4846146}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6761A499-56B3-47C2-920A-594E801E0BB4} = {6761A499-56B3-47C2-920A-594E801E0BB4}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogamDev.Hearthstone.Vo", "LogamDev.Hearthstone.Vo\LogamDev.Hearthstone.Vo.csproj", "{F0FC7E25-5BB0-4420-AAB9-A3E5AEF876FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogamDev.Hearthstone.Services", "LogamDev.Hearthstone.Services\LogamDev.Hearthstone.Services.csproj", "{324A4C13-3E0B-4503-87DC-BD5CA9FED76A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogamDev.Hearthstone.Arbiter", "LogamDev.Hearthstone.Arbiter\LogamDev.Hearthstone.Arbiter.csproj", "{41BB93ED-9CCC-4F2C-A0A6-AE56CB69775B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6761A499-56B3-47C2-920A-594E801E0BB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6761A499-56B3-47C2-920A-594E801E0BB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6761A499-56B3-47C2-920A-594E801E0BB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6761A499-56B3-47C2-920A-594E801E0BB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8EE3DEA-77C8-48F3-9D43-E302C4846146}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8EE3DEA-77C8-48F3-9D43-E302C4846146}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8EE3DEA-77C8-48F3-9D43-E302C4846146}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8EE3DEA-77C8-48F3-9D43-E302C4846146}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0FC7E25-5BB0-4420-AAB9-A3E5AEF876FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0FC7E25-5BB0-4420-AAB9-A3E5AEF876FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0FC7E25-5BB0-4420-AAB9-A3E5AEF876FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0FC7E25-5BB0-4420-AAB9-A3E5AEF876FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{324A4C13-3E0B-4503-87DC-BD5CA9FED76A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{324A4C13-3E0B-4503-87DC-BD5CA9FED76A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{324A4C13-3E0B-4503-87DC-BD5CA9FED76A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{324A4C13-3E0B-4503-87DC-BD5CA9FED76A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41BB93ED-9CCC-4F2C-A0A6-AE56CB69775B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41BB93ED-9CCC-4F2C-A0A6-AE56CB69775B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41BB93ED-9CCC-4F2C-A0A6-AE56CB69775B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41BB93ED-9CCC-4F2C-A0A6-AE56CB69775B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F8EE3DEA-77C8-48F3-9D43-E302C4846146} = {C29B2AAC-E399-47D7-B5FC-CE3CD0BAADDB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E7C059CB-0F62-4BD0-9372-5133F3680D13}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="StyleCop.Cache" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.MSBuild" Version="5.0.0" />
+    <PackageReference Include="Unity" Version="5.8.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LogamDev.Hearthstone.Vo\LogamDev.Hearthstone.Vo.csproj" />
+  </ItemGroup>
+
+</Project>
