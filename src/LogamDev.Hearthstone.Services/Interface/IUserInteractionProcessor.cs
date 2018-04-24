@@ -10,5 +10,7 @@ namespace LogamDev.Hearthstone.Services.Interface
             InternalSide internalSideActivePlayer,
             InternalSide opponentSide,
             UserInteractionBase userInteraction);
+
+        ValidationResult ValidateUserInteraction(GameState currentState, UserInteractionBase interaction);
     }
 }

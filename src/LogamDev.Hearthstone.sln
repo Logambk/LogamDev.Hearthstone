@@ -14,9 +14,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogamDev.Hearthstone.Dto.Un
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogamDev.Hearthstone.Vo", "LogamDev.Hearthstone.Vo\LogamDev.Hearthstone.Vo.csproj", "{F0FC7E25-5BB0-4420-AAB9-A3E5AEF876FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogamDev.Hearthstone.Services", "LogamDev.Hearthstone.Services\LogamDev.Hearthstone.Services.csproj", "{324A4C13-3E0B-4503-87DC-BD5CA9FED76A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogamDev.Hearthstone.Services", "LogamDev.Hearthstone.Services\LogamDev.Hearthstone.Services.csproj", "{324A4C13-3E0B-4503-87DC-BD5CA9FED76A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogamDev.Hearthstone.Arbiter", "LogamDev.Hearthstone.Arbiter\LogamDev.Hearthstone.Arbiter.csproj", "{41BB93ED-9CCC-4F2C-A0A6-AE56CB69775B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogamDev.Hearthstone.Arbiter", "LogamDev.Hearthstone.Arbiter\LogamDev.Hearthstone.Arbiter.csproj", "{41BB93ED-9CCC-4F2C-A0A6-AE56CB69775B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogamDev.Hearthstone.Arbiter.UnitTest", "UnitTest\LogamDev.Hearthstone.Arbiter.UnitTest\LogamDev.Hearthstone.Arbiter.UnitTest.csproj", "{25CD0A38-F542-4986-883E-DA6A214BFE31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,12 +46,17 @@ Global
 		{41BB93ED-9CCC-4F2C-A0A6-AE56CB69775B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41BB93ED-9CCC-4F2C-A0A6-AE56CB69775B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41BB93ED-9CCC-4F2C-A0A6-AE56CB69775B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25CD0A38-F542-4986-883E-DA6A214BFE31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25CD0A38-F542-4986-883E-DA6A214BFE31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25CD0A38-F542-4986-883E-DA6A214BFE31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25CD0A38-F542-4986-883E-DA6A214BFE31}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F8EE3DEA-77C8-48F3-9D43-E302C4846146} = {C29B2AAC-E399-47D7-B5FC-CE3CD0BAADDB}
+		{25CD0A38-F542-4986-883E-DA6A214BFE31} = {C29B2AAC-E399-47D7-B5FC-CE3CD0BAADDB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E7C059CB-0F62-4BD0-9372-5133F3680D13}

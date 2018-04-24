@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <None Remove="StyleCop.Cache" />
+    <None Remove="TestData\Decks\Deck1.txt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,6 +17,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="..\..\..\api\23966-us\cards.json" Link="TestData\23966-us\cards.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\Decks\Deck1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

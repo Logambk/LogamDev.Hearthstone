@@ -21,7 +21,7 @@ namespace LogamDev.Hearthstone.Dto.UnitTest
         [ClassData(typeof(TestDataVersions))]
         public void ShouldParseCardsWithoutException(JArray collectible, JArray nonCollectible)
         {
-            var parser = ContainerProvider.OriginalContainer.Resolve<IHearthstoneJsonCardParser>();
+            var parser = ContainerResolver.Resolve<IHearthstoneJsonCardParser>();
             parser.Parse(collectible);
             parser.Parse(nonCollectible);
         }
@@ -41,7 +41,7 @@ namespace LogamDev.Hearthstone.Dto.UnitTest
         [ClassData(typeof(TestDataVersions))]
         public void ShouldFindAllEnumValues(JArray collectible, JArray nonCollectible)
         {
-            var parser = ContainerProvider.OriginalContainer.Resolve<IHearthstoneJsonCardParser>();
+            var parser = ContainerResolver.Resolve<IHearthstoneJsonCardParser>();
             var collectibleCards = parser.Parse(collectible);
             var nonCollectibleCards = parser.Parse(nonCollectible);
 

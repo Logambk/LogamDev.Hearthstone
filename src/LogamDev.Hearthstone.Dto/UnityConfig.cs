@@ -9,6 +9,7 @@ namespace LogamDev.Hearthstone.Dto
         {
             container.RegisterType<IHearthstoneJsonCardConverter, HearthstoneJsonCardConverter>();
             container.RegisterType<IHearthstoneJsonCardParser, HearthstoneJsonCardParser>();
+            container.RegisterType<IDeckPlainTextParser, DeckPlainTextParser>();
         }
     }
 }

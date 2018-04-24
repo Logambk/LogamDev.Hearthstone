@@ -9,10 +9,8 @@ namespace LogamDev.Hearthstone.Services
         {
             container.RegisterType<IDeckValidator, DeckValidator>();
             container.RegisterType<IGameStatePreparator, GameStatePreparator>();
-            container.RegisterType<IInternalSideInitializer, InternalSideInitializer>();
             container.RegisterType<IRuleSet, RegularRuleSet>();
             container.RegisterType<IUserInteractionProcessor, UserInteractionProcessor>();
-            container.RegisterType<IUserInteractionValidator, UserInteractionValidator>();
         }
     }
 }

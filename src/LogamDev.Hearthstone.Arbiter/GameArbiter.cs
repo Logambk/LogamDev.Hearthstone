@@ -9,10 +9,8 @@ namespace LogamDev.Hearthstone.Arbiter
     {
         private readonly IDeckValidator deckValidator;
         private readonly IGameStatePreparator gameStatePreparator;
-        private readonly IInternalSideInitializer internalSideInitializer;
         private readonly IRuleSet ruleSet;
         private readonly IUserInteractionProcessor userInteractionProcessor;
-        private readonly IUserInteractionValidator userInteractionValidator;
         
         private InternalSide player1Side;
         private InternalSide player2Side;
@@ -68,17 +66,13 @@ namespace LogamDev.Hearthstone.Arbiter
         public GameArbiter(
             IDeckValidator deckValidator,
             IGameStatePreparator gameStatePreparator,
-            IInternalSideInitializer internalSideInitializer,
             IRuleSet ruleSet,
-            IUserInteractionProcessor userInteractionProcessor,
-            IUserInteractionValidator userInteractionValidator)
+            IUserInteractionProcessor userInteractionProcessor)
         {
             this.deckValidator = deckValidator;
             this.gameStatePreparator = gameStatePreparator;
-            this.internalSideInitializer = internalSideInitializer;
             this.ruleSet = ruleSet;
             this.userInteractionProcessor = userInteractionProcessor;
-            this.userInteractionValidator = userInteractionValidator;
         }
 
         public GameResult StartGame(
@@ -100,8 +94,8 @@ namespace LogamDev.Hearthstone.Arbiter
                 };
             }
 
-            player1Side = internalSideInitializer.Initialize(playerInitializer1);
-            player2Side = internalSideInitializer.Initialize(playerInitializer2);
+            player1Side = gameStatePreparator.Initialize(playerInitializer1);
+            player2Side = gameStatePreparator.Initialize(playerInitializer2);
 
             //TODO: gamble the right of first turn.
             //TODO: implement mulligan and initial draw here
@@ -129,7 +123,7 @@ namespace LogamDev.Hearthstone.Arbiter
                 while (true)
                 {
                     var interaction = ActivePlayerInteractor.Interact();
-                    var interactionValidation = userInteractionValidator.ValidateUserInteraction(stateForActiveUser, interaction);
+                    var interactionValidation = userInteractionProcessor.ValidateUserInteraction(stateForActiveUser, interaction);
                     if (!interactionValidation.IsOk)
                     {
                         //TODO: figure out where to log the validator messages

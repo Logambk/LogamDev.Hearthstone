@@ -1,0 +1,26 @@
+### Classic Hunter
+# Class: Hunter
+# Format: Wild
+#
+# 2x (1) Arcane Shot
+# 2x (1) Hunter's Mark
+# 2x (1) Leper Gnome
+# 2x (2) Bloodfen Raptor
+# 1x (2) Dire Wolf Alpha
+# 1x (2) Explosive Trap
+# 2x (2) Freezing Trap
+# 2x (2) Scavenging Hyena
+# 1x (2) Snake Trap
+# 2x (3) Animal Companion
+# 2x (3) Eaglehorn Bow
+# 1x (3) Jungle Panther
+# 2x (3) Kill Command
+# 2x (3) Unleash the Hounds
+# 2x (4) Houndmaster
+# 1x (5) Tundra Rhino
+# 1x (6) Deathstalker Rexxar
+# 2x (6) Savannah Highmane
+# 
+AAEBAR8GxwPJBLsFmQfZB4bTAgyNAdgBqAK1A4cEkgXtBusH2wntCYEK/gwA
+# 
+# To use this deck, copy it to your clipboard and create a new deck in Hearthstone

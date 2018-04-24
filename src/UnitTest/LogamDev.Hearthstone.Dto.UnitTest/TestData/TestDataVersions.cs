@@ -11,8 +11,8 @@ namespace LogamDev.Hearthstone.Dto.UnitTest.TestData
             "23966-us"
         };
 
-        private string GetCollectibleContent(string version) => TestData.GetStringContent($@"TestData\{version}\cards.collectible.json");
-        private string GetNonCollectibleContent(string version) => TestData.GetStringContent($@"TestData\{version}\cards.json");
+        private string GetCollectibleContent(string version) => TestDataProvider.GetStringContent($@"TestData\{version}\cards.collectible.json");
+        private string GetNonCollectibleContent(string version) => TestDataProvider.GetStringContent($@"TestData\{version}\cards.json");
 
         public IEnumerator<object[]> GetEnumerator()
         {

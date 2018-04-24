@@ -10,12 +10,26 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="..\..\api\23966-us\cards.collectible.json" Link="api\cards.collectible.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\api\23966-us\cards.json" Link="api\cards.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="StyleCop.MSBuild" Version="5.0.0" />
     <PackageReference Include="Unity" Version="5.8.6" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LogamDev.Hearthstone.Dto\LogamDev.Hearthstone.Dto.csproj" />
     <ProjectReference Include="..\LogamDev.Hearthstone.Vo\LogamDev.Hearthstone.Vo.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="api\" />
   </ItemGroup>
 
 </Project>

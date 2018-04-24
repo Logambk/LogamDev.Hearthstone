@@ -3,7 +3,7 @@ using System.IO;
 
 namespace LogamDev.Hearthstone.Dto.UnitTest.TestData
 {
-    public static class TestData
+    public static class TestDataProvider
     {
         private static Dictionary<string, string> jsons = new Dictionary<string, string>();
 
