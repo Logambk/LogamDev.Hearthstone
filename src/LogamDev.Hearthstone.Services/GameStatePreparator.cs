@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Vo.Card;
 using LogamDev.Hearthstone.Vo.Game;
+using LogamDev.Hearthstone.Vo.GameEvent;
 
 namespace LogamDev.Hearthstone.Services
 {
@@ -15,7 +16,7 @@ namespace LogamDev.Hearthstone.Services
             this.ruleSet = ruleSet;
         }
 
-        public GameState PrepareGameState(InternalSide activeUser, InternalSide opponent)
+        public GameState PrepareGameState(InternalSide activeUser, InternalSide opponent, List<GameEventBase> thisTurnEvents)
         {
             return new GameState()
             {
@@ -26,7 +27,8 @@ namespace LogamDev.Hearthstone.Services
                 OpponentMinions = opponent.Minions,
                 You = activeUser.Player,
                 YourDeckSize = activeUser.Deck.Count,
-                YourMinions = activeUser.Minions
+                YourMinions = activeUser.Minions,
+                ThisTurnEvents = thisTurnEvents
             };
         }
 

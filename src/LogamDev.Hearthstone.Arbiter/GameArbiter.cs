@@ -1,6 +1,10 @@
-﻿using LogamDev.Hearthstone.Arbiter.Interface;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using LogamDev.Hearthstone.Arbiter.Interface;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Vo.Game;
+using LogamDev.Hearthstone.Vo.GameEvent;
 using LogamDev.Hearthstone.Vo.Interaction;
 
 namespace LogamDev.Hearthstone.Arbiter
@@ -99,12 +103,27 @@ namespace LogamDev.Hearthstone.Arbiter
 
             //TODO: gamble the right of first turn.
             //TODO: implement mulligan and initial draw here
+            //TODO: add service for draws and fatigue
+            for (int i = 0; i < ruleSet.HandStartingSize; i++)
+            {
+                var randomCardIndex = new Random().Next(0, player1Side.Deck.Count);
+                var card = player1Side.Deck[randomCardIndex];
+                player1Side.Deck.RemoveAt(randomCardIndex);
+                player1Side.Hand.Add(card);
+
+                var randomCardIndex2 = new Random().Next(0, player2Side.Deck.Count);
+                var card2 = player2Side.Deck[randomCardIndex2];
+                player2Side.Deck.RemoveAt(randomCardIndex2);
+                player2Side.Hand.Add(card);
+            }
+            
             isPlayerOneActive = true;
             var internalTurnNumber = 1;
             var turnNumberMax = 400;
 
             while (internalTurnNumber < turnNumberMax)
             {
+                var events = new List<GameEventBase>();
                 //TODO: turn structure here
                 //TODO: server events here
                 if (ActivePlayerSide.Player.TotalPermanentManaCrystals < ruleSet.PlayerMaxManaCrystals)
@@ -113,10 +132,15 @@ namespace LogamDev.Hearthstone.Arbiter
                 }
 
                 //TODO: draw the card from the deck
+                var randomCardIndex = new Random().Next(0, ActivePlayerSide.Deck.Count);
+                var card = ActivePlayerSide.Deck[randomCardIndex];
+                ActivePlayerSide.Deck.RemoveAt(randomCardIndex);
+                ActivePlayerSide.Hand.Add(card);
+
                 //TODO: start of turn events here
                 //TODO: update the state to both users
                 //TODO: send the events
-                var stateForActiveUser = gameStatePreparator.PrepareGameState(ActivePlayerSide, PassivePlayerSide);
+                var stateForActiveUser = gameStatePreparator.PrepareGameState(ActivePlayerSide, PassivePlayerSide, events);
                 ActivePlayerInteractor.Update(new GameStateUpdate() { NewState = stateForActiveUser });
 
                 //TODO: add time limit for a user to interact
@@ -133,14 +157,25 @@ namespace LogamDev.Hearthstone.Arbiter
                         };
                     }
 
-                    if (interaction is UserInteractionEndTurn)
+                    if (interaction is InteractionEndTurn)
                     {
                         break;
                     }
 
                     //TODO: send the events to other user
-                    var events = userInteractionProcessor.ProcessInteraction(ActivePlayerSide, PassivePlayerSide, interaction);
-                    stateForActiveUser = gameStatePreparator.PrepareGameState(ActivePlayerSide, PassivePlayerSide);
+                    var newEvents = userInteractionProcessor.ProcessInteraction(ActivePlayerSide, PassivePlayerSide, interaction);
+                    events.AddRange(newEvents);
+                    if (events.Any(x => x is GameEventPlayerDeath))
+                    {
+                        // TODO: find a more approriate way to stop the game
+                        return new GameResult()
+                        {
+                            IsOk = true,
+                            IsFirstPlayerWon = isPlayerOneActive
+                        };
+                    }
+
+                    stateForActiveUser = gameStatePreparator.PrepareGameState(ActivePlayerSide, PassivePlayerSide, events);
                     ActivePlayerInteractor.Update(new GameStateUpdate() { Events = events, NewState = stateForActiveUser });
                 }
 

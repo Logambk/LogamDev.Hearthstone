@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
 using LogamDev.Hearthstone.Vo.Game;
+using LogamDev.Hearthstone.Vo.GameEvent;
 using LogamDev.Hearthstone.Vo.Interaction;
 
 namespace LogamDev.Hearthstone.Services.Interface
 {
     public interface IUserInteractionProcessor
     {
-        List<GameEvent> ProcessInteraction(
+        List<GameEventBase> ProcessInteraction(
             InternalSide internalSideActivePlayer,
             InternalSide opponentSide,
-            UserInteractionBase userInteraction);
+            InteractionBase userInteraction);
 
-        ValidationResult ValidateUserInteraction(GameState currentState, UserInteractionBase interaction);
+        ValidationResult ValidateUserInteraction(GameState currentState, InteractionBase interaction);
     }
 }

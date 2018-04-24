@@ -23,4 +23,10 @@
     <ProjectReference Include="..\..\LogamDev.Hearthstone.Arbiter\LogamDev.Hearthstone.Arbiter.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestData\Decks\Deck1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

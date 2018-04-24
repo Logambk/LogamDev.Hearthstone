@@ -5,6 +5,7 @@ using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Vo.Card;
 using LogamDev.Hearthstone.Vo.Enum;
 using LogamDev.Hearthstone.Vo.Game;
+using LogamDev.Hearthstone.Vo.GameEvent;
 using LogamDev.Hearthstone.Vo.Interaction;
 
 namespace LogamDev.Hearthstone.Services
@@ -18,31 +19,53 @@ namespace LogamDev.Hearthstone.Services
             this.ruleSet = ruleSet;
         }
 
-        public List<GameEvent> ProcessInteraction(InternalSide internalSideActivePlayer, InternalSide opponentSide, UserInteractionBase userInteraction)
+        public List<GameEventBase> ProcessInteraction(InternalSide internalSideActivePlayer, InternalSide opponentSide, InteractionBase userInteraction)
         {
-            if (userInteraction is UserInteractionPlayCard)
+            if (userInteraction is InteractionPlayCard)
             {
-                return ProcessPlayCard(internalSideActivePlayer, opponentSide, userInteraction as UserInteractionPlayCard);
+                return ProcessPlayCard(internalSideActivePlayer, opponentSide, userInteraction as InteractionPlayCard);
             }
-            else if (userInteraction is UserInteractionAttack)
+            else if (userInteraction is InteractionAttack)
+            {
+                return ProcessAttack(internalSideActivePlayer, opponentSide, userInteraction as InteractionAttack);
+            }
+            else if (userInteraction is InteractionEndTurn)
             {
                 //TODO: support interaction
-                return new List<GameEvent>();
-            }
-            else if (userInteraction is UserInteractionEndTurn)
-            {
-                //TODO: support interaction
-                return new List<GameEvent>();
+                return new List<GameEventBase>();
             }
             else
             {
                 //TODO: handle unknown type
-                return new List<GameEvent>();
+                return new List<GameEventBase>();
             }
         }
 
-        private List<GameEvent> ProcessPlayCard(InternalSide internalSideActivePlayer, InternalSide opponentSide, UserInteractionPlayCard userInteractionPlayCard)
+        private List<GameEventBase> ProcessAttack(InternalSide internalSideActivePlayer, InternalSide opponentSide, InteractionAttack interactionAttack)
         {
+            if (interactionAttack.Attacker != null && interactionAttack.Target == null)
+            {
+                // only handle minion attack in the face at the moment
+                var events = new List<GameEventBase>();
+                events.Add(new GameEventAttack() { Attacker = interactionAttack.Attacker, Target = interactionAttack.Target });
+                opponentSide.Player.Health -= internalSideActivePlayer.Minions.First(x => x.Id == interactionAttack.Attacker).Attack;
+
+                if (opponentSide.Player.Health <= 0)
+                {
+                    events.Add(new GameEventPlayerDeath());
+                }
+
+                return events;
+            }
+
+            //TODO: handle other types of attack targets
+            return new List<GameEventBase>();
+        }
+
+        private List<GameEventBase> ProcessPlayCard(InternalSide internalSideActivePlayer, InternalSide opponentSide, InteractionPlayCard userInteractionPlayCard)
+        {
+            var events = new List<GameEventBase>();
+
             var card = internalSideActivePlayer.Hand.First(x => x.Id == userInteractionPlayCard.CardId);
             //TODO: add mana service to handle mana payments
             var manaNeeded = card.Cost;
@@ -60,6 +83,7 @@ namespace LogamDev.Hearthstone.Services
 
             //TODO: handle opponent secrets somewhere here
             internalSideActivePlayer.Hand.Remove(card);
+            events.Add(new GameEventPlayCard() { Dbfid = card.DbfId });
 
             switch (card.Type)
             {
@@ -68,6 +92,7 @@ namespace LogamDev.Hearthstone.Services
                 case CardType.Minion:
                     var minion = new Minion(card as CardMinion);
                     internalSideActivePlayer.Minions.Insert(userInteractionPlayCard.MinionPosition.Value, minion);
+                    events.Add(new GameEventSummon() { MinionId = minion.Id });
                     break;
                 case CardType.Weapon:
                     break;
@@ -75,20 +100,20 @@ namespace LogamDev.Hearthstone.Services
                     break;
             }
 
-            return new List<GameEvent>();
+            return events;
         }
 
-        public ValidationResult ValidateUserInteraction(GameState currentState, UserInteractionBase interaction)
+        public ValidationResult ValidateUserInteraction(GameState currentState, InteractionBase interaction)
         {
-            if (interaction is UserInteractionPlayCard)
+            if (interaction is InteractionPlayCard)
             {
-                return ValidatePlayCard(currentState, interaction as UserInteractionPlayCard);
+                return ValidatePlayCard(currentState, interaction as InteractionPlayCard);
             }
-            else if (interaction is UserInteractionAttack)
+            else if (interaction is InteractionAttack)
             {
-                return ValidateAttack(currentState, interaction as UserInteractionAttack);
+                return ValidateAttack(currentState, interaction as InteractionAttack);
             }
-            else if (interaction is UserInteractionEndTurn)
+            else if (interaction is InteractionEndTurn)
             {
                 return ValidateEndTurn(currentState);
             }
@@ -102,7 +127,7 @@ namespace LogamDev.Hearthstone.Services
             }
         }
 
-        private ValidationResult ValidatePlayCard(GameState currentState, UserInteractionPlayCard playCardInteraction)
+        private ValidationResult ValidatePlayCard(GameState currentState, InteractionPlayCard playCardInteraction)
         {
             var validationResult = new ValidationResult()
             {
@@ -171,7 +196,7 @@ namespace LogamDev.Hearthstone.Services
             return new ValidationResult() { IsOk = true };
         }
 
-        private ValidationResult ValidateAttack(GameState currentState, UserInteractionAttack attackInteraction)
+        private ValidationResult ValidateAttack(GameState currentState, InteractionAttack attackInteraction)
         {
             //TODO: implement validation
             return new ValidationResult() { IsOk = true };

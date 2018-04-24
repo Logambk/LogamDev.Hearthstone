@@ -5,7 +5,7 @@ namespace LogamDev.Hearthstone.Arbiter.Interface
 {
     public interface IUserInteractor
     {
-        UserInteractionBase Interact();
+        InteractionBase Interact();
         void Update(GameStateUpdate gameStateUpdate);
     }
 }

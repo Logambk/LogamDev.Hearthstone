@@ -55,6 +55,7 @@ namespace LogamDev.Hearthstone.Dto
         {
             CardBase card = null;
             if (cardDto != null && cardDto.Type != null && cardDto.Class != null && cardDto.DbfId != null
+                && !string.IsNullOrWhiteSpace(cardDto.Name)
                 && typeMapping.ContainsKey(cardDto.Type.Value)
                 && classMapping.ContainsKey(cardDto.Class.Value)
                 && rarityMapping.ContainsKey(cardDto.Rarity.Value))
@@ -103,11 +104,12 @@ namespace LogamDev.Hearthstone.Dto
 
                 if (card != null)
                 {
-                    card.Cost = cardDto.Cost;
-                    card.Type = typeMapping[cardDto.Type.Value];
                     card.Class = classMapping[cardDto.Class.Value];
-                    card.Rarity = rarityMapping[cardDto.Rarity.Value];
+                    card.Cost = cardDto.Cost;
+                    card.Name = cardDto.Name;
                     card.DbfId = cardDto.DbfId.Value;
+                    card.Rarity = rarityMapping[cardDto.Rarity.Value];
+                    card.Type = typeMapping[cardDto.Type.Value];
                 }
             }
 
