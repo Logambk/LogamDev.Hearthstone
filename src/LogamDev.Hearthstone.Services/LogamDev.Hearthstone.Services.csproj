@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="StyleCop.MSBuild" Version="5.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
     <PackageReference Include="Unity" Version="5.8.6" />
   </ItemGroup>
 

@@ -8,7 +8,7 @@ namespace LogamDev.Hearthstone.Vo.GameEvent
         public Guid? Attacker { get; set; }
         public Guid? Target { get; set; }
 
-        public GameEventAttack() : base (GameEventType.Attack)
+        public GameEventAttack() : base(GameEventType.Attack)
         {
         }
     }

@@ -28,20 +28,16 @@ namespace LogamDev.Hearthstone.Arbiter.UnitTest
                 };
             }
 
-            // go face
-            else
+            var minionIdsSummonedThisTurn = gameState.ThisTurnEvents.Where(x => x.Type == GameEventType.Summon).Select(x => (x as GameEventSummon).MinionId).ToList();
+            var minonsIdsWhoAtackedThisTurn = gameState.ThisTurnEvents.Where(x => x.Type == GameEventType.Attack).Select(x => (x as GameEventAttack).Attacker).ToList();
+            var yourMinionWhichCanAttack = gameState.YourMinions.Where(x => !minionIdsSummonedThisTurn.Contains(x.Id) && !minonsIdsWhoAtackedThisTurn.Contains(x.Id)).ToList();
+            if (yourMinionWhichCanAttack.Any())
             {
-                var minionIdsSummonedThisTurn = gameState.ThisTurnEvents.Where(x => x.Type == GameEventType.Summon).Select(x => (x as GameEventSummon).MinionId).ToList();
-                var minonsIdsWhoAtackedThisTurn = gameState.ThisTurnEvents.Where(x => x.Type == GameEventType.Attack).Select(x => (x as GameEventAttack).Attacker).ToList();
-                var yourMinionWhichCanAttack = gameState.YourMinions.Where(x => !minionIdsSummonedThisTurn.Contains(x.Id) && !minonsIdsWhoAtackedThisTurn.Contains(x.Id)).ToList();
-                if (yourMinionWhichCanAttack.Any())
+                return new InteractionAttack()
                 {
-                    return new InteractionAttack()
-                    {
-                        Attacker = yourMinionWhichCanAttack.First().Id,
-                        Target = null   //TODO: think about how to handle face attack targets
-                    };
-                }
+                    Attacker = yourMinionWhichCanAttack.First().Id,
+                    Target = null   //TODO: think about how to handle face attack targets
+                };
             }
 
             return new InteractionEndTurn();
