@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using LogamDev.Hearthstone.Services.Interface;
+using LogamDev.Hearthstone.Services.Log;
 using LogamDev.Hearthstone.Vo.Card;
 using LogamDev.Hearthstone.Vo.Enum;
 using LogamDev.Hearthstone.Vo.Game;
@@ -13,10 +14,12 @@ namespace LogamDev.Hearthstone.Services
     public class UserInteractionProcessor : IUserInteractionProcessor
     {
         private readonly IRuleSet ruleSet;
+        private readonly ILogger logger;
 
-        public UserInteractionProcessor(IRuleSet ruleSet)
+        public UserInteractionProcessor(IRuleSet ruleSet, ILogger logger)
         {
             this.ruleSet = ruleSet;
+            this.logger = logger;
         }
 
         public List<GameEventBase> ProcessInteraction(InternalSide internalSideActivePlayer, InternalSide opponentSide, InteractionBase userInteraction)
@@ -43,30 +46,37 @@ namespace LogamDev.Hearthstone.Services
 
         private List<GameEventBase> ProcessAttack(InternalSide internalSideActivePlayer, InternalSide opponentSide, InteractionAttack interactionAttack)
         {
+            var events = new List<GameEventBase>();
+
             if (interactionAttack.Attacker != null && interactionAttack.Target == null)
             {
                 // only handle minion attack in the face at the moment
-                var events = new List<GameEventBase>();
                 events.Add(new GameEventAttack() { Attacker = interactionAttack.Attacker, Target = interactionAttack.Target });
-                opponentSide.Player.Health -= internalSideActivePlayer.Minions.First(x => x.Id == interactionAttack.Attacker).Attack;
+                var attackingMinion = internalSideActivePlayer.Minions.First(x => x.Id == interactionAttack.Attacker);
+
+                logger.Log(LogType.Services, LogSeverity.Info, $"{attackingMinion.Card.Name} attacks {opponentSide.Player.Name} for {attackingMinion.Attack} hp");
+
+                opponentSide.Player.Health -= attackingMinion.Attack;
+
+                logger.Log(LogType.Services, LogSeverity.Info, $"{opponentSide.Player.Name} Health reduced to {opponentSide.Player.Health} hp");
 
                 if (opponentSide.Player.Health <= 0)
                 {
                     events.Add(new GameEventPlayerDeath());
                 }
-
-                return events;
             }
 
             //TODO: handle other types of attack targets
-            return new List<GameEventBase>();
+            return events;
         }
 
         private List<GameEventBase> ProcessPlayCard(InternalSide internalSideActivePlayer, InternalSide opponentSide, InteractionPlayCard userInteractionPlayCard)
         {
             var events = new List<GameEventBase>();
-
             var card = internalSideActivePlayer.Hand.First(x => x.Id == userInteractionPlayCard.CardId);
+
+            logger.Log(LogType.Services, LogSeverity.Info, $"{internalSideActivePlayer.Player.Name} plays {card.Name} for {card.Cost} mana");
+
             //TODO: add mana service to handle mana payments
             var manaNeeded = card.Cost;
             if (internalSideActivePlayer.Player.TemporaryManaCrystals > 0)
@@ -91,6 +101,7 @@ namespace LogamDev.Hearthstone.Services
                     break;
                 case CardType.Minion:
                     var minion = new Minion(card as CardMinion);
+                    logger.Log(LogType.Services, LogSeverity.Info, $"{minion.Card.Name} is summoned");
                     internalSideActivePlayer.Minions.Insert(userInteractionPlayCard.MinionPosition.Value, minion);
                     events.Add(new GameEventSummon() { MinionId = minion.Id });
                     break;

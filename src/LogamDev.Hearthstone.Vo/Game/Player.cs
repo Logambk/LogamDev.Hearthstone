@@ -1,4 +1,5 @@
 ﻿using LogamDev.Hearthstone.Vo.Card;
+using LogamDev.Hearthstone.Vo.Enum;
 
 namespace LogamDev.Hearthstone.Vo.Game
 {
@@ -9,6 +10,8 @@ namespace LogamDev.Hearthstone.Vo.Game
         public int Armor { get; set; }
         public Weapon EquipedWeapon { get; set; }
         public int Health { get; set; }
+        public string Name { get; set; }
+        public CardClass Class { get; set; }
         public int TotalPermanentManaCrystals { get; set; }
         public int UsedPermanentManaCrystals { get; set; }
         public int TemporaryManaCrystals { get; set; }

@@ -2,5 +2,8 @@
 {
     public enum LogType
     {
+        Services,
+        Arbiter,
+        Misc
     }
 }

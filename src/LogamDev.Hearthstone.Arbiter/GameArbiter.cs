@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LogamDev.Hearthstone.Arbiter.Interface;
 using LogamDev.Hearthstone.Services.Interface;
+using LogamDev.Hearthstone.Services.Log;
 using LogamDev.Hearthstone.Vo.Game;
 using LogamDev.Hearthstone.Vo.GameEvent;
 using LogamDev.Hearthstone.Vo.Interaction;
@@ -15,6 +16,7 @@ namespace LogamDev.Hearthstone.Arbiter
         private readonly IGameStatePreparator gameStatePreparator;
         private readonly IRuleSet ruleSet;
         private readonly IUserInteractionProcessor userInteractionProcessor;
+        private readonly ILogger logger;
         
         private InternalSide player1Side;
         private InternalSide player2Side;
@@ -71,12 +73,14 @@ namespace LogamDev.Hearthstone.Arbiter
             IDeckValidator deckValidator,
             IGameStatePreparator gameStatePreparator,
             IRuleSet ruleSet,
-            IUserInteractionProcessor userInteractionProcessor)
+            IUserInteractionProcessor userInteractionProcessor,
+            ILogger logger)
         {
             this.deckValidator = deckValidator;
             this.gameStatePreparator = gameStatePreparator;
             this.ruleSet = ruleSet;
             this.userInteractionProcessor = userInteractionProcessor;
+            this.logger = logger;
         }
 
         public GameResult StartGame(
@@ -85,6 +89,8 @@ namespace LogamDev.Hearthstone.Arbiter
             IUserInteractor playerInteractor1,
             IUserInteractor playerInteractor2)
         {
+            logger.Log(LogType.Arbiter, LogSeverity.Info, "Game started");
+
             this.playerInteractor1 = playerInteractor1;
             this.playerInteractor2 = playerInteractor2;
             var deckValidation1 = deckValidator.ValidateDeck(playerInitializer1.Deck, playerInitializer1.Class);
@@ -121,8 +127,10 @@ namespace LogamDev.Hearthstone.Arbiter
             var internalTurnNumber = 1;
             var turnNumberMax = 400;
 
-            while (internalTurnNumber < turnNumberMax)
+            while (internalTurnNumber++ < turnNumberMax)
             {
+                logger.Log(LogType.Arbiter, LogSeverity.Info, $"Turn {internalTurnNumber / 2} started for {ActivePlayerSide.Player.Name}");
+
                 var events = new List<GameEventBase>();
                 //TODO: turn structure here
                 //TODO: server events here
@@ -167,6 +175,8 @@ namespace LogamDev.Hearthstone.Arbiter
                     events.AddRange(newEvents);
                     if (events.Any(x => x is GameEventPlayerDeath))
                     {
+                        logger.Log(LogType.Arbiter, LogSeverity.Info, $"{ActivePlayerSide.Player.Name} Won");
+
                         // TODO: find a more approriate way to stop the game
                         return new GameResult()
                         {

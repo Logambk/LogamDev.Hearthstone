@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
+using LogamDev.Hearthstone.Services.Log;
 
 namespace LogamDev.Hearthstone.Services.Configuration
 {
     public static class Config
     {
         private static Dictionary<string, string> conf = new Dictionary<string, string>();
+        private const string DefaultLoggingFileName = "Log.txt";
 
-        public static bool AllowLogging => GetBoolean(ConfigKeys.AllowLogging, true);
+        public static bool LoggingIsEnabled => GetBoolean(ConfigKeys.LoggingIsEnabled, true);
+        public static LogSeverity LoggingMinimumSeverityLevel => LogSeverity.Error;
+        public static string LoggingFileName => GetStr(ConfigKeys.LoggingFileName, DefaultLoggingFileName);
 
         private static bool GetBoolean(string key, bool defaultValue)
         {
@@ -23,7 +25,7 @@ namespace LogamDev.Hearthstone.Services.Configuration
             return defaultValue;
         }
 
-        private static string GetStr(string key)
+        private static string GetStr(string key, string defaultValue = null)
         {
             if (string.IsNullOrWhiteSpace(key))
             {
@@ -38,7 +40,7 @@ namespace LogamDev.Hearthstone.Services.Configuration
                 }
                 else
                 {
-                    conf[key] = string.Empty;
+                    conf[key] = defaultValue ?? string.Empty;
                 }
             }
 

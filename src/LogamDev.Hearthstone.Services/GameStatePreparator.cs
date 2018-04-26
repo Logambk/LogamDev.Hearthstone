@@ -47,6 +47,8 @@ namespace LogamDev.Hearthstone.Services
                     TemporaryManaCrystals = 0,
                     TotalPermanentManaCrystals = ruleSet.PlayerStartingManaCrystals,
                     UsedPermanentManaCrystals = 0,
+                    Class = playerInitializer.Class,
+                    Name = playerInitializer.Name
                 }
             };
 
