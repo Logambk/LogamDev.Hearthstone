@@ -9,7 +9,7 @@
         int HandStartingSize { get; }
         int HandMaxSize { get; }
         int PlayerStartingHealth { get; }
-        int PlayerStartingManaCrystals { get; }
-        int PlayerMaxManaCrystals { get; }
+        int ManaStorageCrystalsAtStart { get; }
+        int ManaStorageMaxCrystals { get; }
     }
 }

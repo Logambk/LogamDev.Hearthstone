@@ -4,7 +4,7 @@ namespace LogamDev.Hearthstone.Vo.GameEvent
 {
     public abstract class GameEventBase
     {
-        public GameEventType Type { get; set; }
+        public GameEventType Type { get; private set; }
 
         public GameEventBase(GameEventType type)
         {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using LogamDev.Hearthstone.Vo.GameEvent;
 
-namespace LogamDev.Hearthstone.Vo.Game
+namespace LogamDev.Hearthstone.Vo.State
 {
     public class GameStateUpdate
     {

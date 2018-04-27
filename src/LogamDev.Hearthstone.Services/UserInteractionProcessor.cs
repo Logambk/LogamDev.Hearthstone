@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Services.Log;
@@ -8,6 +7,7 @@ using LogamDev.Hearthstone.Vo.Enum;
 using LogamDev.Hearthstone.Vo.Game;
 using LogamDev.Hearthstone.Vo.GameEvent;
 using LogamDev.Hearthstone.Vo.Interaction;
+using LogamDev.Hearthstone.Vo.State;
 
 namespace LogamDev.Hearthstone.Services
 {
@@ -22,29 +22,26 @@ namespace LogamDev.Hearthstone.Services
             this.logger = logger;
         }
 
-        public List<GameEventBase> ProcessInteraction(InternalSide internalSideActivePlayer, InternalSide opponentSide, InteractionBase userInteraction)
+        public List<GameEventBase> ProcessInteraction(InternalState me, InternalState opp, InteractionBase interaction)
         {
-            if (userInteraction is InteractionPlayCard)
+            switch (interaction.Type)
             {
-                return ProcessPlayCard(internalSideActivePlayer, opponentSide, userInteraction as InteractionPlayCard);
+                case InteractionType.Attack:
+                    return ProcessAttack(me, opp, interaction as InteractionAttack);
+
+                case InteractionType.PlayCard:
+                    return ProcessPlayCard(me, opp, interaction as InteractionPlayCard);
+
+                case InteractionType.EndTurn:
+                    //TODO: support interaction
+                    return new List<GameEventBase>();
             }
-            else if (userInteraction is InteractionAttack)
-            {
-                return ProcessAttack(internalSideActivePlayer, opponentSide, userInteraction as InteractionAttack);
-            }
-            else if (userInteraction is InteractionEndTurn)
-            {
-                //TODO: support interaction
-                return new List<GameEventBase>();
-            }
-            else
-            {
-                //TODO: handle unknown type
-                return new List<GameEventBase>();
-            }
+
+            //TODO: handle unknown type
+            return new List<GameEventBase>();
         }
 
-        private List<GameEventBase> ProcessAttack(InternalSide internalSideActivePlayer, InternalSide opponentSide, InteractionAttack interactionAttack)
+        private List<GameEventBase> ProcessAttack(InternalState me, InternalState opp, InteractionAttack interactionAttack)
         {
             var events = new List<GameEventBase>();
 
@@ -52,15 +49,15 @@ namespace LogamDev.Hearthstone.Services
             {
                 // only handle minion attack in the face at the moment
                 events.Add(new GameEventAttack() { Attacker = interactionAttack.Attacker, Target = interactionAttack.Target });
-                var attackingMinion = internalSideActivePlayer.Minions.First(x => x.Id == interactionAttack.Attacker);
+                var attackingMinion = me.Minions.First(x => x.Id == interactionAttack.Attacker);
 
-                logger.Log(LogType.Services, LogSeverity.Info, $"{attackingMinion.Card.Name} attacks {opponentSide.Player.Name} for {attackingMinion.Attack} hp");
+                logger.Log(LogType.Services, LogSeverity.Info, $"{attackingMinion.Card.Name} attacks {opp.Player.Name} for {attackingMinion.Attack} hp");
 
-                opponentSide.Player.Health -= attackingMinion.Attack;
+                opp.Player.Health -= attackingMinion.Attack;
 
-                logger.Log(LogType.Services, LogSeverity.Info, $"{opponentSide.Player.Name} Health reduced to {opponentSide.Player.Health} hp");
+                logger.Log(LogType.Services, LogSeverity.Info, $"{opp.Player.Name} Health reduced to {opp.Player.Health} hp");
 
-                if (opponentSide.Player.Health <= 0)
+                if (opp.Player.Health <= 0)
                 {
                     events.Add(new GameEventPlayerDeath());
                 }
@@ -70,29 +67,17 @@ namespace LogamDev.Hearthstone.Services
             return events;
         }
 
-        private List<GameEventBase> ProcessPlayCard(InternalSide internalSideActivePlayer, InternalSide opponentSide, InteractionPlayCard userInteractionPlayCard)
+        private List<GameEventBase> ProcessPlayCard(InternalState me, InternalState opp, InteractionPlayCard interactionPlayCard)
         {
             var events = new List<GameEventBase>();
-            var card = internalSideActivePlayer.Hand.First(x => x.Id == userInteractionPlayCard.CardId);
+            var card = me.Hand.First(x => x.Id == interactionPlayCard.CardId);
 
-            logger.Log(LogType.Services, LogSeverity.Info, $"{internalSideActivePlayer.Player.Name} plays {card.Name} for {card.Cost} mana");
+            logger.Log(LogType.Services, LogSeverity.Info, $"{me.Player.Name} plays {card.Name} for {card.Cost} mana");
 
-            //TODO: add mana service to handle mana payments
-            var manaNeeded = card.Cost;
-            if (internalSideActivePlayer.Player.TemporaryManaCrystals > 0)
-            {
-                var appliedMana = Math.Min(manaNeeded, internalSideActivePlayer.Player.TemporaryManaCrystals);
-                manaNeeded -= appliedMana;
-                internalSideActivePlayer.Player.TemporaryManaCrystals -= appliedMana;
-            }
-
-            if (manaNeeded > 0)
-            {
-                internalSideActivePlayer.Player.UsedPermanentManaCrystals += manaNeeded;
-            }
+            me.Mana.SpendMana(card.Cost);
 
             //TODO: handle opponent secrets somewhere here
-            internalSideActivePlayer.Hand.Remove(card);
+            me.Hand.Remove(card);
             events.Add(new GameEventPlayCard() { Dbfid = card.DbfId });
 
             switch (card.Type)
@@ -102,7 +87,7 @@ namespace LogamDev.Hearthstone.Services
                 case CardType.Minion:
                     var minion = new Minion(card as CardMinion);
                     logger.Log(LogType.Services, LogSeverity.Info, $"{minion.Card.Name} is summoned");
-                    internalSideActivePlayer.Minions.Insert(userInteractionPlayCard.MinionPosition.Value, minion);
+                    me.Minions.Insert(interactionPlayCard.MinionPosition.Value, minion);
                     events.Add(new GameEventSummon() { MinionId = minion.Id });
                     break;
                 case CardType.Weapon:
@@ -138,7 +123,7 @@ namespace LogamDev.Hearthstone.Services
             }
         }
 
-        private ValidationResult ValidatePlayCard(GameState currentState, InteractionPlayCard playCardInteraction)
+        private ValidationResult ValidatePlayCard(GameState state, InteractionPlayCard interactionPlayCard)
         {
             var validationResult = new ValidationResult()
             {
@@ -146,14 +131,14 @@ namespace LogamDev.Hearthstone.Services
                 Messages = new List<string>()
             };
 
-            if (playCardInteraction.CardId == null)
+            if (interactionPlayCard.CardId == null)
             {
                 validationResult.IsOk = false;
                 validationResult.Messages.Add($"Failed to play card: CardId is null");
                 return validationResult;
             }
 
-            var matchedCards = currentState.Hand.FindAll(x => x.Id == playCardInteraction.CardId);
+            var matchedCards = state.Me.Hand.FindAll(x => x.Id == interactionPlayCard.CardId);
             if (matchedCards.Count > 1)
             {
                 validationResult.IsOk = false;
@@ -171,34 +156,33 @@ namespace LogamDev.Hearthstone.Services
             var cardInHand = matchedCards[0];
 
             //TODO: add service for handling mana costs
-            var availableMana = currentState.You.TotalPermanentManaCrystals - currentState.You.UsedPermanentManaCrystals + currentState.You.TemporaryManaCrystals;
-            if (cardInHand.Cost > availableMana)
+            if (cardInHand.Cost > state.Me.Mana.AvailableManaThisTurn)
             {
                 validationResult.IsOk = false;
-                validationResult.Messages.Add($"Failed to play card: Card costs {cardInHand.Cost} but only {availableMana} mana is available");
+                validationResult.Messages.Add($"Failed to play card: Card costs {cardInHand.Cost} but only {state.Me.Mana.AvailableManaThisTurn} mana is available");
                 return validationResult;
             }
 
-            if (cardInHand.Type == Vo.Enum.CardType.Minion)
+            if (cardInHand.Type == CardType.Minion)
             {
-                if (currentState.YourMinions.Count >= ruleSet.FieldMaxMinionsAtSide)
+                if (state.Me.Minions.Count >= ruleSet.FieldMaxMinionsAtSide)
                 {
                     validationResult.IsOk = false;
                     validationResult.Messages.Add($"Failed to play card: You cannot have more then {ruleSet.FieldMaxMinionsAtSide} minions");
                     return validationResult;
                 }
 
-                if (playCardInteraction.MinionPosition == null)
+                if (interactionPlayCard.MinionPosition == null)
                 {
                     validationResult.IsOk = false;
                     validationResult.Messages.Add($"Failed to play card: Required minion position was not provided");
                     return validationResult;
                 }
 
-                if (playCardInteraction.MinionPosition < 0 || playCardInteraction.MinionPosition > currentState.YourMinions.Count)
+                if (interactionPlayCard.MinionPosition < 0 || interactionPlayCard.MinionPosition > state.Me.Minions.Count)
                 {
                     validationResult.IsOk = false;
-                    validationResult.Messages.Add($"Failed to play card: Minion position incorrect. Expected betwen 0 and {currentState.YourMinions.Count}, but {playCardInteraction.MinionPosition} was provided");
+                    validationResult.Messages.Add($"Failed to play card: Minion position incorrect. Expected betwen 0 and {state.Me.Minions.Count}, but {interactionPlayCard.MinionPosition} was provided");
                     return validationResult;
                 }
             }

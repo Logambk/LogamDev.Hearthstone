@@ -7,6 +7,7 @@ using LogamDev.Hearthstone.Services.Log;
 using LogamDev.Hearthstone.Vo.Game;
 using LogamDev.Hearthstone.Vo.GameEvent;
 using LogamDev.Hearthstone.Vo.Interaction;
+using LogamDev.Hearthstone.Vo.State;
 
 namespace LogamDev.Hearthstone.Arbiter
 {
@@ -18,38 +19,38 @@ namespace LogamDev.Hearthstone.Arbiter
         private readonly IUserInteractionProcessor userInteractionProcessor;
         private readonly ILogger logger;
         
-        private InternalSide player1Side;
-        private InternalSide player2Side;
+        private InternalState player1State;
+        private InternalState player2State;
         private IUserInteractor playerInteractor1;
         private IUserInteractor playerInteractor2;
         private bool isPlayerOneActive;
 
-        private InternalSide ActivePlayerSide
+        private InternalState ActivePlayerState
         {
             get
             {
                 if (isPlayerOneActive)
                 {
-                    return player1Side;
+                    return player1State;
                 }
                 else
                 {
-                    return player2Side;
+                    return player2State;
                 }
             }
         }
 
-        private InternalSide PassivePlayerSide
+        private InternalState PassivePlayerState
         {
             get
             {
                 if (!isPlayerOneActive)
                 {
-                    return player1Side;
+                    return player1State;
                 }
                 else
                 {
-                    return player2Side;
+                    return player2State;
                 }
             }
         }
@@ -104,23 +105,23 @@ namespace LogamDev.Hearthstone.Arbiter
                 };
             }
 
-            player1Side = gameStatePreparator.Initialize(playerInitializer1);
-            player2Side = gameStatePreparator.Initialize(playerInitializer2);
+            player1State = gameStatePreparator.Initialize(playerInitializer1);
+            player2State = gameStatePreparator.Initialize(playerInitializer2);
 
             //TODO: gamble the right of first turn.
             //TODO: implement mulligan and initial draw here
             //TODO: add service for draws and fatigue
             for (int i = 0; i < ruleSet.HandStartingSize; i++)
             {
-                var randomCardIndex = new Random().Next(0, player1Side.Deck.Count);
-                var card = player1Side.Deck[randomCardIndex];
-                player1Side.Deck.RemoveAt(randomCardIndex);
-                player1Side.Hand.Add(card);
+                var randomCardIndex = new Random().Next(0, player1State.Deck.Count);
+                var card = player1State.Deck[randomCardIndex];
+                player1State.Deck.RemoveAt(randomCardIndex);
+                player1State.Hand.Add(card);
 
-                var randomCardIndex2 = new Random().Next(0, player2Side.Deck.Count);
-                var card2 = player2Side.Deck[randomCardIndex2];
-                player2Side.Deck.RemoveAt(randomCardIndex2);
-                player2Side.Hand.Add(card);
+                var randomCardIndex2 = new Random().Next(0, player2State.Deck.Count);
+                var card2 = player2State.Deck[randomCardIndex2];
+                player2State.Deck.RemoveAt(randomCardIndex2);
+                player2State.Hand.Add(card);
             }
             
             isPlayerOneActive = true;
@@ -129,26 +130,29 @@ namespace LogamDev.Hearthstone.Arbiter
 
             while (internalTurnNumber++ < turnNumberMax)
             {
-                logger.Log(LogType.Arbiter, LogSeverity.Info, $"Turn {internalTurnNumber / 2} started for {ActivePlayerSide.Player.Name}");
+                logger.Log(LogType.Arbiter, LogSeverity.Info, $"Turn {internalTurnNumber / 2} started for {ActivePlayerState.Player.Name}");
 
                 var events = new List<GameEventBase>();
-                //TODO: turn structure here
-                //TODO: server events here
-                if (ActivePlayerSide.Player.TotalPermanentManaCrystals < ruleSet.PlayerMaxManaCrystals)
+               
+                // Add new non-empty mana crystal
+                if (ActivePlayerState.Mana.PermanentManaCrystals < ruleSet.ManaStorageMaxCrystals)
                 {
-                    ActivePlayerSide.Player.TotalPermanentManaCrystals++;
+                    ActivePlayerState.Mana.AddManaCrystals(1, false);
                 }
 
+                // Refresh Permanent Mana Crystals
+                ActivePlayerState.Mana.RefreshPermanentManaCrystals();
+
                 //TODO: draw the card from the deck
-                var randomCardIndex = new Random().Next(0, ActivePlayerSide.Deck.Count);
-                var card = ActivePlayerSide.Deck[randomCardIndex];
-                ActivePlayerSide.Deck.RemoveAt(randomCardIndex);
-                ActivePlayerSide.Hand.Add(card);
+                var randomCardIndex = new Random().Next(0, ActivePlayerState.Deck.Count);
+                var card = ActivePlayerState.Deck[randomCardIndex];
+                ActivePlayerState.Deck.RemoveAt(randomCardIndex);
+                ActivePlayerState.Hand.Add(card);
 
                 //TODO: start of turn events here
                 //TODO: update the state to both users
                 //TODO: send the events
-                var stateForActiveUser = gameStatePreparator.PrepareGameState(ActivePlayerSide, PassivePlayerSide, events);
+                var stateForActiveUser = gameStatePreparator.PrepareGameState(ActivePlayerState, PassivePlayerState, events);
                 ActivePlayerInteractor.Update(new GameStateUpdate() { NewState = stateForActiveUser });
 
                 //TODO: add time limit for a user to interact
@@ -171,11 +175,11 @@ namespace LogamDev.Hearthstone.Arbiter
                     }
 
                     //TODO: send the events to other user
-                    var newEvents = userInteractionProcessor.ProcessInteraction(ActivePlayerSide, PassivePlayerSide, interaction);
+                    var newEvents = userInteractionProcessor.ProcessInteraction(ActivePlayerState, PassivePlayerState, interaction);
                     events.AddRange(newEvents);
                     if (events.Any(x => x is GameEventPlayerDeath))
                     {
-                        logger.Log(LogType.Arbiter, LogSeverity.Info, $"{ActivePlayerSide.Player.Name} Won");
+                        logger.Log(LogType.Arbiter, LogSeverity.Info, $"{ActivePlayerState.Player.Name} Won");
 
                         // TODO: find a more approriate way to stop the game
                         return new GameResult()
@@ -185,9 +189,12 @@ namespace LogamDev.Hearthstone.Arbiter
                         };
                     }
 
-                    stateForActiveUser = gameStatePreparator.PrepareGameState(ActivePlayerSide, PassivePlayerSide, events);
+                    stateForActiveUser = gameStatePreparator.PrepareGameState(ActivePlayerState, PassivePlayerState, events);
                     ActivePlayerInteractor.Update(new GameStateUpdate() { Events = events, NewState = stateForActiveUser });
                 }
+
+                // Burn Unused Mana
+                ActivePlayerState.Mana.BurnTemporaryCrystals();
 
                 //TODO: end of turn events here
                 isPlayerOneActive = !isPlayerOneActive;

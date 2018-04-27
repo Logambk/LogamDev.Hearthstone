@@ -1,4 +1,5 @@
 ﻿using System;
+using LogamDev.Hearthstone.Vo.Enum;
 
 namespace LogamDev.Hearthstone.Vo.Interaction
 {
@@ -6,5 +7,9 @@ namespace LogamDev.Hearthstone.Vo.Interaction
     {
         public Guid? Attacker { get; set; }
         public Guid? Target { get; set; }
+
+        public InteractionAttack() : base(InteractionType.Attack)
+        {
+        }
     }
 }

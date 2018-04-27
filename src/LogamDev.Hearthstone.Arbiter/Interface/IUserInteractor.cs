@@ -1,5 +1,5 @@
-﻿using LogamDev.Hearthstone.Vo.Game;
-using LogamDev.Hearthstone.Vo.Interaction;
+﻿using LogamDev.Hearthstone.Vo.Interaction;
+using LogamDev.Hearthstone.Vo.State;
 
 namespace LogamDev.Hearthstone.Arbiter.Interface
 {

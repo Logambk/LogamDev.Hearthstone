@@ -12,8 +12,5 @@ namespace LogamDev.Hearthstone.Vo.Game
         public int Health { get; set; }
         public string Name { get; set; }
         public CardClass Class { get; set; }
-        public int TotalPermanentManaCrystals { get; set; }
-        public int UsedPermanentManaCrystals { get; set; }
-        public int TemporaryManaCrystals { get; set; }
     }
 }

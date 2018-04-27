@@ -4,6 +4,11 @@ namespace LogamDev.Hearthstone.Vo.Interaction
 {
     public abstract class InteractionBase
     {
-        public InteractionType Type { get; set; }
+        public InteractionType Type { get; private set; }
+
+        public InteractionBase(InteractionType type)
+        {
+            Type = type;
+        }
     }
 }

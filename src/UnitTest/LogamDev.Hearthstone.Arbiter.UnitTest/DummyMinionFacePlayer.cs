@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using LogamDev.Hearthstone.Arbiter.Interface;
 using LogamDev.Hearthstone.Vo.Enum;
-using LogamDev.Hearthstone.Vo.Game;
 using LogamDev.Hearthstone.Vo.GameEvent;
 using LogamDev.Hearthstone.Vo.Interaction;
+using LogamDev.Hearthstone.Vo.State;
 
 namespace LogamDev.Hearthstone.Arbiter.UnitTest
 {
@@ -15,22 +15,21 @@ namespace LogamDev.Hearthstone.Arbiter.UnitTest
         public InteractionBase Interact()
         {
             // play minions
-            var availableMana = gameState.You.TotalPermanentManaCrystals - gameState.You.UsedPermanentManaCrystals;
-            var availableMinionsToPlay = gameState.Hand.Where(x => x.Type == CardType.Minion && x.Cost <= availableMana).ToList();
-            if (gameState.YourMinions.Count < 7 && availableMinionsToPlay.Any())
+            var availableMinionsToPlay = gameState.Me.Hand.Where(x => x.Type == CardType.Minion && x.Cost <= gameState.Me.Mana.AvailableManaThisTurn).ToList();
+            if (gameState.Me.Minions.Count < 7 && availableMinionsToPlay.Any())
             {
                 var minionToPlay = availableMinionsToPlay.First();
                 return new InteractionPlayCard()
                 {
                     CardId = minionToPlay.Id,
-                    MinionPosition = gameState.YourMinions.Count,
+                    MinionPosition = gameState.Me.Minions.Count,
                     Target = null
                 };
             }
 
             var minionIdsSummonedThisTurn = gameState.ThisTurnEvents.Where(x => x.Type == GameEventType.Summon).Select(x => (x as GameEventSummon).MinionId).ToList();
             var minonsIdsWhoAtackedThisTurn = gameState.ThisTurnEvents.Where(x => x.Type == GameEventType.Attack).Select(x => (x as GameEventAttack).Attacker).ToList();
-            var yourMinionWhichCanAttack = gameState.YourMinions.Where(x => !minionIdsSummonedThisTurn.Contains(x.Id) && !minonsIdsWhoAtackedThisTurn.Contains(x.Id)).ToList();
+            var yourMinionWhichCanAttack = gameState.Me.Minions.Where(x => !minionIdsSummonedThisTurn.Contains(x.Id) && !minonsIdsWhoAtackedThisTurn.Contains(x.Id)).ToList();
             if (yourMinionWhichCanAttack.Any())
             {
                 return new InteractionAttack()

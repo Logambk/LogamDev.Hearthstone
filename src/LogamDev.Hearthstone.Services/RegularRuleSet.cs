@@ -11,7 +11,7 @@ namespace LogamDev.Hearthstone.Services
         public int HandStartingSize => 3;
         public int HandMaxSize => 10;
         public int PlayerStartingHealth => 30;
-        public int PlayerStartingManaCrystals => 0;
-        public int PlayerMaxManaCrystals => 10;
+        public int ManaStorageCrystalsAtStart => 0;
+        public int ManaStorageMaxCrystals => 10;
     }
 }

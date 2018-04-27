@@ -22,15 +22,6 @@ namespace LogamDev.Hearthstone.Dto
                 { CardClass.NEUTRAL, Vo.Enum.CardClass.Neutral }
             };
 
-        private readonly Dictionary<CardType, Vo.Enum.CardType> typeMapping =
-            new Dictionary<CardType, Vo.Enum.CardType>()
-            {
-                { CardType.SPELL, Vo.Enum.CardType.Spell },
-                { CardType.MINION, Vo.Enum.CardType.Minion },
-                { CardType.WEAPON, Vo.Enum.CardType.Weapon },
-                { CardType.HERO, Vo.Enum.CardType.Hero }
-            };
-
         private readonly Dictionary<Rarity, Vo.Enum.CardRarity> rarityMapping =
             new Dictionary<Rarity, Vo.Enum.CardRarity>()
             {
@@ -56,7 +47,6 @@ namespace LogamDev.Hearthstone.Dto
             CardBase card = null;
             if (cardDto != null && cardDto.Type != null && cardDto.Class != null && cardDto.DbfId != null
                 && !string.IsNullOrWhiteSpace(cardDto.Name)
-                && typeMapping.ContainsKey(cardDto.Type.Value)
                 && classMapping.ContainsKey(cardDto.Class.Value)
                 && rarityMapping.ContainsKey(cardDto.Rarity.Value))
             {
@@ -109,7 +99,6 @@ namespace LogamDev.Hearthstone.Dto
                     card.Name = cardDto.Name;
                     card.DbfId = cardDto.DbfId.Value;
                     card.Rarity = rarityMapping[cardDto.Rarity.Value];
-                    card.Type = typeMapping[cardDto.Type.Value];
                 }
             }
 

@@ -4,6 +4,7 @@ using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Vo.Card;
 using LogamDev.Hearthstone.Vo.Game;
 using LogamDev.Hearthstone.Vo.GameEvent;
+using LogamDev.Hearthstone.Vo.State;
 
 namespace LogamDev.Hearthstone.Services
 {
@@ -16,25 +17,26 @@ namespace LogamDev.Hearthstone.Services
             this.ruleSet = ruleSet;
         }
 
-        public GameState PrepareGameState(InternalSide activeUser, InternalSide opponent, List<GameEventBase> thisTurnEvents)
+        public GameState PrepareGameState(InternalState me, InternalState opp, List<GameEventBase> thisTurnEvents)
         {
             return new GameState()
             {
-                Hand = activeUser.Hand,
-                Opponent = opponent.Player,
-                OpponentDeckSize = opponent.Deck.Count,
-                OpponentHandSize = opponent.Hand.Count,
-                OpponentMinions = opponent.Minions,
-                You = activeUser.Player,
-                YourDeckSize = activeUser.Deck.Count,
-                YourMinions = activeUser.Minions,
-                ThisTurnEvents = thisTurnEvents
+                Me = me,
+                Opp = new ExternalState()
+                {
+                    Player = opp.Player,
+                    Minions = opp.Minions,
+                    ManaStorage = opp.Mana,
+                    DeckSize = opp.Deck.Count,
+                    HandSize = opp.Hand.Count
+                },
+                ThisTurnEvents = thisTurnEvents,
             };
         }
 
-        public InternalSide Initialize(PlayerInitializer playerInitializer)
+        public InternalState Initialize(PlayerInitializer playerInitializer)
         {
-            var state = new InternalSide()
+            var state = new InternalState()
             {
                 Deck = playerInitializer.Deck,
                 Hand = new List<CardBase>(),
@@ -44,12 +46,10 @@ namespace LogamDev.Hearthstone.Services
                     Armor = 0,
                     EquipedWeapon = null,
                     Health = ruleSet.PlayerStartingHealth,
-                    TemporaryManaCrystals = 0,
-                    TotalPermanentManaCrystals = ruleSet.PlayerStartingManaCrystals,
-                    UsedPermanentManaCrystals = 0,
                     Class = playerInitializer.Class,
                     Name = playerInitializer.Name
-                }
+                },
+                Mana = new ManaStorage(ruleSet.ManaStorageCrystalsAtStart)
             };
 
             foreach (var card in state.Deck)
