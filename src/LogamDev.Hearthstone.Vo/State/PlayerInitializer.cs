@@ -2,7 +2,7 @@
 using LogamDev.Hearthstone.Vo.Card;
 using LogamDev.Hearthstone.Vo.Enum;
 
-namespace LogamDev.Hearthstone.Vo.Game
+namespace LogamDev.Hearthstone.Vo.State
 {
     public class PlayerInitializer
     {

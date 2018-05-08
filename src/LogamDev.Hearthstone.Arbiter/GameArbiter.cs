@@ -4,8 +4,7 @@ using System.Linq;
 using LogamDev.Hearthstone.Arbiter.Interface;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Services.Log;
-using LogamDev.Hearthstone.Vo.Game;
-using LogamDev.Hearthstone.Vo.GameEvent;
+using LogamDev.Hearthstone.Vo.Event;
 using LogamDev.Hearthstone.Vo.Interaction;
 using LogamDev.Hearthstone.Vo.State;
 
@@ -132,7 +131,7 @@ namespace LogamDev.Hearthstone.Arbiter
             {
                 logger.Log(LogType.Arbiter, LogSeverity.Info, $"Turn {internalTurnNumber / 2} started for {ActivePlayerState.Player.Name}");
 
-                var events = new List<GameEventBase>();
+                var events = new List<EventBase>();
                
                 // Add new non-empty mana crystal
                 if (ActivePlayerState.Mana.PermanentManaCrystals < ruleSet.ManaStorageMaxCrystals)
@@ -177,7 +176,7 @@ namespace LogamDev.Hearthstone.Arbiter
                     //TODO: send the events to other user
                     var newEvents = userInteractionProcessor.ProcessInteraction(ActivePlayerState, PassivePlayerState, interaction);
                     events.AddRange(newEvents);
-                    if (events.Any(x => x is GameEventPlayerDeath))
+                    if (events.Any(x => x is EventPlayerDeath))
                     {
                         logger.Log(LogType.Arbiter, LogSeverity.Info, $"{ActivePlayerState.Player.Name} Won");
 

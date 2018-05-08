@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LogamDev.Hearthstone.Vo.State
+namespace LogamDev.Hearthstone.Vo.Game
 {
     public class ManaStorage
     {

@@ -8,6 +8,7 @@ namespace LogamDev.Hearthstone.Vo.State
     {
         public Player Player { get; set; }
         public ManaStorage Mana { get; set; }
+        public TriggerStorage Triggers { get; set; }
         public List<Minion> Minions { get; set; }
         public List<CardBase> Hand { get; set; }
         public List<CardBase> Deck { get; set; }

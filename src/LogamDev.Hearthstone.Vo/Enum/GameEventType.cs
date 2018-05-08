@@ -2,7 +2,9 @@
 {
     public enum GameEventType
     {
-        Attack,
+        CharacterAttacks,
+        CharacterDealsDamage,
+        CharacterHealed,
         EndOfTurn,
         PlayCard,
         PlayerDeath,

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using LogamDev.Hearthstone.Vo.GameEvent;
+using LogamDev.Hearthstone.Vo.Event;
 
 namespace LogamDev.Hearthstone.Vo.State
 {
@@ -9,6 +9,6 @@ namespace LogamDev.Hearthstone.Vo.State
         public ExternalState Opp { get; set; }
 
         //TODO: re-think about how to handle temporary turn things like attacks
-        public List<GameEventBase> ThisTurnEvents { get; set; }
+        public List<EventBase> ThisTurnEvents { get; set; }
     }
 }

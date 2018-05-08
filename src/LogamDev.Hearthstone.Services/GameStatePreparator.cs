@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Vo.Card;
+using LogamDev.Hearthstone.Vo.Event;
 using LogamDev.Hearthstone.Vo.Game;
-using LogamDev.Hearthstone.Vo.GameEvent;
 using LogamDev.Hearthstone.Vo.State;
 
 namespace LogamDev.Hearthstone.Services
@@ -17,7 +17,7 @@ namespace LogamDev.Hearthstone.Services
             this.ruleSet = ruleSet;
         }
 
-        public GameState PrepareGameState(InternalState me, InternalState opp, List<GameEventBase> thisTurnEvents)
+        public GameState PrepareGameState(InternalState me, InternalState opp, List<EventBase> thisTurnEvents)
         {
             return new GameState()
             {
@@ -41,14 +41,7 @@ namespace LogamDev.Hearthstone.Services
                 Deck = playerInitializer.Deck,
                 Hand = new List<CardBase>(),
                 Minions = new List<Minion>(),
-                Player = new Player()
-                {
-                    Armor = 0,
-                    EquipedWeapon = null,
-                    Health = ruleSet.PlayerStartingHealth,
-                    Class = playerInitializer.Class,
-                    Name = playerInitializer.Name
-                },
+                Player = new Player(playerInitializer.Name, playerInitializer.Class, ruleSet.PlayerStartingHealth),
                 Mana = new ManaStorage(ruleSet.ManaStorageCrystalsAtStart)
             };
 

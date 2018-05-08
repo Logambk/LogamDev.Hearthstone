@@ -13,8 +13,8 @@ namespace LogamDev.Hearthstone.Vo.Game
             Id = Guid.NewGuid();
         }
 
-        public CardMinion Card { get; private set; }
         public int Attack { get; set; }
+        public CardMinion Card { get; private set; }
         public int Health { get; set; }
         public Guid Id { get; set; }
     }

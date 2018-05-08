@@ -5,7 +5,7 @@ using LogamDev.Hearthstone.Arbiter.Interface;
 using LogamDev.Hearthstone.Dto.Interface;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Vo.Enum;
-using LogamDev.Hearthstone.Vo.Game;
+using LogamDev.Hearthstone.Vo.State;
 using Unity;
 using Xunit;
 
