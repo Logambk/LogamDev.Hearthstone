@@ -7,7 +7,7 @@ namespace LogamDev.Hearthstone.Services.Interface
 {
     public interface IUserInteractionProcessor
     {
-        List<EventBase> ProcessInteraction(InternalState me, InternalState opp, InteractionBase interaction);
-        ValidationResult ValidateUserInteraction(GameState state, InteractionBase interaction);
+        List<EventBase> ProcessInteraction(FullGameState fullState, InteractionBase interaction);
+        ValidationResult ValidateInteraction(GameState state, InteractionBase interaction);
     }
 }

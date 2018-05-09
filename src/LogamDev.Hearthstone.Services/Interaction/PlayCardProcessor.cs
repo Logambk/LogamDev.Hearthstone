@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Services.Log;
@@ -10,87 +9,24 @@ using LogamDev.Hearthstone.Vo.Game;
 using LogamDev.Hearthstone.Vo.Interaction;
 using LogamDev.Hearthstone.Vo.State;
 
-namespace LogamDev.Hearthstone.Services
+namespace LogamDev.Hearthstone.Services.Interaction
 {
-    public class UserInteractionProcessor : IUserInteractionProcessor
+    public class PlayCardProcessor
     {
-        private readonly IRuleSet ruleSet;
         private readonly ILogger logger;
-
-        public UserInteractionProcessor(IRuleSet ruleSet, ILogger logger)
+        private readonly IRuleSet ruleSet;
+        public PlayCardProcessor(ILogger logger, IRuleSet ruleSet)
         {
-            this.ruleSet = ruleSet;
             this.logger = logger;
+            this.ruleSet = ruleSet;
         }
 
-        public List<EventBase> ProcessInteraction(InternalState me, InternalState opp, InteractionBase interaction)
+        public List<EventBase> ProcessPlayCard(FullGameState fullState, InteractionPlayCard interactionPlayCard)
         {
-            switch (interaction.Type)
-            {
-                case InteractionType.Attack:
-                    return ProcessAttack(me, opp, interaction as InteractionAttack);
-
-                case InteractionType.PlayCard:
-                    return ProcessPlayCard(me, opp, interaction as InteractionPlayCard);
-
-                case InteractionType.EndTurn:
-                    return ProcessEndTurn(me, opp, interaction as InteractionEndTurn);
-            }
-
-            throw new ArgumentOutOfRangeException("interaction.Type", interaction.Type, "Unsupported interaction type");
-        }
-
-        public ValidationResult ValidateUserInteraction(GameState currentState, InteractionBase interaction)
-        {
-            switch (interaction.Type)
-            {
-                case InteractionType.Attack:
-                    return ValidateAttack(currentState, interaction as InteractionAttack);
-
-                case InteractionType.PlayCard:
-                    return ValidatePlayCard(currentState, interaction as InteractionPlayCard);
-
-                case InteractionType.EndTurn:
-                    return ValidateEndTurn(currentState);
-            }
-
-            return new ValidationResult()
-            {
-                IsOk = false,
-                Messages = new List<string>() { $"Unknown Interaction of type {interaction.GetType()} encountered" }
-            };
-        }
-
-        #region process interactions
-
-        private List<EventBase> ProcessAttack(InternalState me, InternalState opp, InteractionAttack interactionAttack)
-        {
+            var me = fullState.Me;
+            var opp = fullState.Opp;
             var events = new List<EventBase>();
 
-            if (interactionAttack.Attacker != me.Player.Id && interactionAttack.Target == opp.Player.Id)
-            {
-                events.Add(new EventCharacterAttacks() { Attacker = interactionAttack.Attacker, Attacked = interactionAttack.Target });
-                var attackingMinion = me.Minions.First(x => x.Id == interactionAttack.Attacker);
-
-                logger.Log(LogType.Services, LogSeverity.Info, $"{attackingMinion.Card.Name} attacks {opp.Player.Name} for {attackingMinion.Attack} hp");
-
-                opp.Player.Health -= attackingMinion.Attack;
-
-                logger.Log(LogType.Services, LogSeverity.Info, $"{opp.Player.Name} Health reduced to {opp.Player.Health} hp");
-
-                if (opp.Player.Health <= 0)
-                {
-                    events.Add(new EventPlayerDeath());
-                }
-            }
-
-            //TODO: handle other types of attack targets
-            return events;
-        }
-
-        private List<EventBase> ProcessPlayCard(InternalState me, InternalState opp, InteractionPlayCard interactionPlayCard)
-        {
-            var events = new List<EventBase>();
             var card = me.Hand.First(x => x.Id == interactionPlayCard.CardId);
 
             logger.Log(LogType.Services, LogSeverity.Info, $"{me.Player.Name} plays {card.Name} for {card.Cost} mana");
@@ -106,7 +42,7 @@ namespace LogamDev.Hearthstone.Services
                 case CardType.Spell:
                     break;
                 case CardType.Minion:
-                    var minion = new Minion(card as CardMinion);
+                    var minion = new Minion(card as CardMinion, me.MinionOrderNumber++);
                     logger.Log(LogType.Services, LogSeverity.Info, $"{minion.Card.Name} is summoned");
                     me.Minions.Insert(interactionPlayCard.MinionPosition.Value, minion);
                     events.Add(new EventSummon() { MinionId = minion.Id });
@@ -120,16 +56,7 @@ namespace LogamDev.Hearthstone.Services
             return events;
         }
 
-        private List<EventBase> ProcessEndTurn(InternalState me, InternalState opp, InteractionEndTurn interactionEndTurn)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region validate interaction
-
-        private ValidationResult ValidatePlayCard(GameState state, InteractionPlayCard interactionPlayCard)
+        public ValidationResult ValidatePlayCard(GameState state, InteractionPlayCard interactionPlayCard)
         {
             var validationResult = new ValidationResult()
             {
@@ -196,19 +123,5 @@ namespace LogamDev.Hearthstone.Services
             //TODO: implement the rest of the validation
             return new ValidationResult() { IsOk = true };
         }
-
-        private ValidationResult ValidateAttack(GameState currentState, InteractionAttack attackInteraction)
-        {
-            //TODO: implement validation
-            return new ValidationResult() { IsOk = true };
-        }
-
-        private ValidationResult ValidateEndTurn(GameState currentState)
-        {
-            //TODO: implement validation
-            return new ValidationResult() { IsOk = true };
-        }
-
-        #endregion
     }
 }

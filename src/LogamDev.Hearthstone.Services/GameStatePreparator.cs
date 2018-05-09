@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Vo.Card;
 using LogamDev.Hearthstone.Vo.Event;
@@ -17,34 +18,50 @@ namespace LogamDev.Hearthstone.Services
             this.ruleSet = ruleSet;
         }
 
-        public GameState PrepareGameState(InternalState me, InternalState opp, List<EventBase> thisTurnEvents)
+        public GameState PrepareGameState(FullGameState fullState)
         {
             return new GameState()
             {
-                Me = me,
-                Opp = new ExternalState()
+                Me = fullState.Me,
+                Opp = new ExternalSide()
                 {
-                    Player = opp.Player,
-                    Minions = opp.Minions,
-                    ManaStorage = opp.Mana,
-                    DeckSize = opp.Deck.Count,
-                    HandSize = opp.Hand.Count
-                },
-                ThisTurnEvents = thisTurnEvents,
+                    Player = fullState.Opp.Player,
+                    Minions = fullState.Opp.Minions,
+                    ManaStorage = fullState.Opp.Mana,
+                    DeckSize = fullState.Opp.Deck.Count,
+                    HandSize = fullState.Opp.Hand.Count,
+                    VisibleEvents = PrepareEventsForExternalUser(fullState.Opp.Events)
+                }
             };
         }
 
-        public InternalState Initialize(PlayerInitializer playerInitializer)
+        private Dictionary<int, List<EventBase>> PrepareEventsForExternalUser(Dictionary<int, List<EventBase>> events)
         {
-            var state = new InternalState()
+            var newEvents = new Dictionary<int, List<EventBase>>();
+            foreach (var kvp in events)
+            {
+                //TODO: think about how to "hide" the events behind the "substitute events"
+                newEvents.Add(kvp.Key, kvp.Value.Where(x => x.IsHiddenToOpponent == false).ToList());
+            }
+
+            return newEvents;
+        }
+
+        public InternalSide Initialize(PlayerInitializer playerInitializer)
+        {
+            var state = new InternalSide()
             {
                 Deck = playerInitializer.Deck,
                 Hand = new List<CardBase>(),
                 Minions = new List<Minion>(),
                 Player = new Player(playerInitializer.Name, playerInitializer.Class, ruleSet.PlayerStartingHealth),
-                Mana = new ManaStorage(ruleSet.ManaStorageCrystalsAtStart)
+                Mana = new ManaStorage(ruleSet.ManaStorageCrystalsAtStart),
+                MinionOrderNumber = 0,
+                Triggers = new TriggerStorage(),
+                Events = new Dictionary<int, List<EventBase>>()
             };
 
+            //TODO: add proper class for deck
             foreach (var card in state.Deck)
             {
                 card.Id = Guid.NewGuid();

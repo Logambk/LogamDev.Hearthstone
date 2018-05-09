@@ -8,8 +8,9 @@
         int FieldMaxMinionsAtSide { get; }
         int HandStartingSize { get; }
         int HandMaxSize { get; }
-        int PlayerStartingHealth { get; }
         int ManaStorageCrystalsAtStart { get; }
         int ManaStorageMaxCrystals { get; }
+        int PlayerStartingHealth { get; }
+        int TurnMaxCountPerGame { get; }
     }
 }

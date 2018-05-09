@@ -18,13 +18,13 @@ namespace LogamDev.Hearthstone.Arbiter
         private readonly IUserInteractionProcessor userInteractionProcessor;
         private readonly ILogger logger;
         
-        private InternalState player1State;
-        private InternalState player2State;
+        private InternalSide player1State;
+        private InternalSide player2State;
         private IUserInteractor playerInteractor1;
         private IUserInteractor playerInteractor2;
         private bool isPlayerOneActive;
 
-        private InternalState ActivePlayerState
+        private InternalSide ActivePlayerState
         {
             get
             {
@@ -39,7 +39,7 @@ namespace LogamDev.Hearthstone.Arbiter
             }
         }
 
-        private InternalState PassivePlayerState
+        private InternalSide PassivePlayerState
         {
             get
             {
@@ -125,40 +125,45 @@ namespace LogamDev.Hearthstone.Arbiter
             
             isPlayerOneActive = true;
             var internalTurnNumber = 1;
-            var turnNumberMax = 400;
 
-            while (internalTurnNumber++ < turnNumberMax)
+            while (internalTurnNumber++ < ruleSet.TurnMaxCountPerGame)
             {
-                logger.Log(LogType.Arbiter, LogSeverity.Info, $"Turn {internalTurnNumber / 2} started for {ActivePlayerState.Player.Name}");
-
-                var events = new List<EventBase>();
-               
-                // Add new non-empty mana crystal
-                if (ActivePlayerState.Mana.PermanentManaCrystals < ruleSet.ManaStorageMaxCrystals)
+                var state = new FullGameState()
                 {
-                    ActivePlayerState.Mana.AddManaCrystals(1, false);
+                    Me = ActivePlayerState,
+                    Opp = PassivePlayerState
+                };
+
+                state.Me.Events.Add(internalTurnNumber, new List<EventBase>());
+
+                logger.Log(LogType.Arbiter, LogSeverity.Info, $"Turn {internalTurnNumber / 2} started for {state.Me.Player.Name}");
+
+                // Add new non-empty mana crystal
+                if (state.Me.Mana.PermanentManaCrystals < ruleSet.ManaStorageMaxCrystals)
+                {
+                    state.Me.Mana.AddManaCrystals(1, false);
                 }
 
                 // Refresh Permanent Mana Crystals
-                ActivePlayerState.Mana.RefreshPermanentManaCrystals();
+                state.Me.Mana.RefreshPermanentManaCrystals();
 
                 //TODO: draw the card from the deck
-                var randomCardIndex = new Random().Next(0, ActivePlayerState.Deck.Count);
-                var card = ActivePlayerState.Deck[randomCardIndex];
-                ActivePlayerState.Deck.RemoveAt(randomCardIndex);
-                ActivePlayerState.Hand.Add(card);
+                var randomCardIndex = new Random().Next(0, state.Me.Deck.Count);
+                var card = state.Me.Deck[randomCardIndex];
+                state.Me.Deck.RemoveAt(randomCardIndex);
+                state.Me.Hand.Add(card);
 
                 //TODO: start of turn events here
                 //TODO: update the state to both users
                 //TODO: send the events
-                var stateForActiveUser = gameStatePreparator.PrepareGameState(ActivePlayerState, PassivePlayerState, events);
-                ActivePlayerInteractor.Update(new GameStateUpdate() { NewState = stateForActiveUser });
+                var stateForActiveUser = gameStatePreparator.PrepareGameState(state);
+                ActivePlayerInteractor.Update(stateForActiveUser);
 
                 //TODO: add time limit for a user to interact
                 while (true)
                 {
                     var interaction = ActivePlayerInteractor.Interact();
-                    var interactionValidation = userInteractionProcessor.ValidateUserInteraction(stateForActiveUser, interaction);
+                    var interactionValidation = userInteractionProcessor.ValidateInteraction(stateForActiveUser, interaction);
                     if (!interactionValidation.IsOk)
                     {
                         //TODO: figure out where to log the validator messages
@@ -174,11 +179,10 @@ namespace LogamDev.Hearthstone.Arbiter
                     }
 
                     //TODO: send the events to other user
-                    var newEvents = userInteractionProcessor.ProcessInteraction(ActivePlayerState, PassivePlayerState, interaction);
-                    events.AddRange(newEvents);
-                    if (events.Any(x => x is EventPlayerDeath))
+                    var newEvents = userInteractionProcessor.ProcessInteraction(state, interaction);
+                    if (newEvents.Any(x => x is EventPlayerDeath))
                     {
-                        logger.Log(LogType.Arbiter, LogSeverity.Info, $"{ActivePlayerState.Player.Name} Won");
+                        logger.Log(LogType.Arbiter, LogSeverity.Info, $"{state.Me.Player.Name} Won");
 
                         // TODO: find a more approriate way to stop the game
                         return new GameResult()
@@ -188,12 +192,12 @@ namespace LogamDev.Hearthstone.Arbiter
                         };
                     }
 
-                    stateForActiveUser = gameStatePreparator.PrepareGameState(ActivePlayerState, PassivePlayerState, events);
-                    ActivePlayerInteractor.Update(new GameStateUpdate() { Events = events, NewState = stateForActiveUser });
+                    stateForActiveUser = gameStatePreparator.PrepareGameState(state);
+                    ActivePlayerInteractor.Update(stateForActiveUser);
                 }
 
                 // Burn Unused Mana
-                ActivePlayerState.Mana.BurnTemporaryCrystals();
+                state.Me.Mana.BurnTemporaryCrystals();
 
                 //TODO: end of turn events here
                 isPlayerOneActive = !isPlayerOneActive;

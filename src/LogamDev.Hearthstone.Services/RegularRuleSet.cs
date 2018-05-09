@@ -13,5 +13,6 @@ namespace LogamDev.Hearthstone.Services
         public int PlayerStartingHealth => 30;
         public int ManaStorageCrystalsAtStart => 0;
         public int ManaStorageMaxCrystals => 10;
+        public int TurnMaxCountPerGame => 400;
     }
 }
