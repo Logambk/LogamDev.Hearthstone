@@ -18,16 +18,24 @@ namespace LogamDev.Hearthstone.Services
             this.ruleSet = ruleSet;
         }
 
-        public GameState PrepareGameState(FullGameState fullState)
+        public ClientGameState PrepareGameState(ServerGameState fullState)
         {
-            return new GameState()
+            return new ClientGameState()
             {
-                Me = fullState.Me,
-                Opp = new ExternalSide()
+                Me = new ClientPlayerState
+                {
+                    Player = fullState.Me.Player,
+                    Minions = fullState.Me.Minions,
+                    Mana = fullState.Me.Mana,
+                    DeckSize = fullState.Me.Deck.Count,
+                    Hand = fullState.Me.Hand,
+                    Events = fullState.Me.Events
+                },
+                Opp = new ClientOpponentState()
                 {
                     Player = fullState.Opp.Player,
                     Minions = fullState.Opp.Minions,
-                    ManaStorage = fullState.Opp.Mana,
+                    Mana = fullState.Opp.Mana,
                     DeckSize = fullState.Opp.Deck.Count,
                     HandSize = fullState.Opp.Hand.Count,
                     VisibleEvents = PrepareEventsForExternalUser(fullState.Opp.Events)
@@ -47,11 +55,12 @@ namespace LogamDev.Hearthstone.Services
             return newEvents;
         }
 
-        public InternalSide Initialize(PlayerInitializer playerInitializer)
+        public ServerPlayerState Initialize(PlayerInitializer playerInitializer)
         {
-            var state = new InternalSide()
+            var state = new ServerPlayerState()
             {
-                Deck = playerInitializer.Deck,
+                OriginalDeck = playerInitializer.Deck,
+                Deck = playerInitializer.Deck.Init(),
                 Hand = new List<CardBase>(),
                 Minions = new List<Minion>(),
                 Player = new Player(playerInitializer.Name, playerInitializer.Class, ruleSet.PlayerStartingHealth),
@@ -60,12 +69,6 @@ namespace LogamDev.Hearthstone.Services
                 Triggers = new TriggerStorage(),
                 Events = new Dictionary<int, List<EventBase>>()
             };
-
-            //TODO: add proper class for deck
-            foreach (var card in state.Deck)
-            {
-                card.Id = Guid.NewGuid();
-            }
 
             return state;
         }

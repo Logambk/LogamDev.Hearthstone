@@ -11,7 +11,6 @@ namespace LogamDev.Hearthstone.Vo.Card
         public Guid Id { get; set; }
         public string Name { get; set; }
         public CardRarity Rarity { get; set; }
-
         public CardType Type { get; private set; }
 
         public abstract CardBase Clone();

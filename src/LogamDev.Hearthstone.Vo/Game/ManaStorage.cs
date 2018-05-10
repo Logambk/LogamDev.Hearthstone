@@ -5,6 +5,7 @@ namespace LogamDev.Hearthstone.Vo.Game
     public class ManaStorage
     {
         //TODO: implement overloading mechanism here
+        //TODO: only leave some vo values here, and move the logic to services
         private int permanentManaCrystalsSpentThisTurn;
         private int temporaryManaCrystalsAvailableThisTurn;
 

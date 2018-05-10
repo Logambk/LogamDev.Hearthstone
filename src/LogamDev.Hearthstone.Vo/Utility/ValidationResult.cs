@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LogamDev.Hearthstone.Services
+namespace LogamDev.Hearthstone.Vo.Utility
 {
     public class ValidationResult
     {

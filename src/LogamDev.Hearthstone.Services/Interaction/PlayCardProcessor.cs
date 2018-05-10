@@ -8,6 +8,7 @@ using LogamDev.Hearthstone.Vo.Event;
 using LogamDev.Hearthstone.Vo.Game;
 using LogamDev.Hearthstone.Vo.Interaction;
 using LogamDev.Hearthstone.Vo.State;
+using LogamDev.Hearthstone.Vo.Utility;
 
 namespace LogamDev.Hearthstone.Services.Interaction
 {
@@ -21,7 +22,7 @@ namespace LogamDev.Hearthstone.Services.Interaction
             this.ruleSet = ruleSet;
         }
 
-        public List<EventBase> ProcessPlayCard(FullGameState fullState, InteractionPlayCard interactionPlayCard)
+        public List<EventBase> ProcessPlayCard(ServerGameState fullState, InteractionPlayCard interactionPlayCard)
         {
             var me = fullState.Me;
             var opp = fullState.Opp;
@@ -56,7 +57,7 @@ namespace LogamDev.Hearthstone.Services.Interaction
             return events;
         }
 
-        public ValidationResult ValidatePlayCard(GameState state, InteractionPlayCard interactionPlayCard)
+        public ValidationResult ValidatePlayCard(ClientGameState state, InteractionPlayCard interactionPlayCard)
         {
             var validationResult = new ValidationResult()
             {

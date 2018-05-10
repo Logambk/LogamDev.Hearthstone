@@ -5,15 +5,16 @@ using LogamDev.Hearthstone.Vo.Game;
 
 namespace LogamDev.Hearthstone.Vo.State
 {
-    public class InternalSide
+    /// <summary>
+    /// This is how you see yourself
+    /// </summary>
+    public class ClientPlayerState
     {
-        public List<CardBase> Deck { get; set; }
-        public List<CardBase> Hand { get; set; }
+        public int DeckSize { get; set; }
+        public Dictionary<int, List<EventBase>> Events { get; set; }
+        public List<CardBase> Hand { get; set; }       
         public ManaStorage Mana { get; set; }
         public List<Minion> Minions { get; set; }
         public Player Player { get; set; }
-        public TriggerStorage Triggers { get; set; }
-        public int MinionOrderNumber { get; set; }
-        public Dictionary<int, List<EventBase>> Events { get; set; }
     }
 }

@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <StyleCopTreatErrorsAsWarnings>false</StyleCopTreatErrorsAsWarnings>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="StyleCop.Cache" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\api\23966-us\cards.collectible.json" Link="api\cards.collectible.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\..\api\23966-us\cards.json" Link="api\cards.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="StyleCop.MSBuild" Version="5.0.0" />
+    <PackageReference Include="Unity" Version="5.8.6" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\LogamDev.Hearthstone.Dto\LogamDev.Hearthstone.Dto.csproj" />
+    <ProjectReference Include="..\..\LogamDev.Hearthstone.Services\LogamDev.Hearthstone.Services.csproj" />
+    <ProjectReference Include="..\..\LogamDev.Hearthstone.Vo\LogamDev.Hearthstone.Vo.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="api\" />
+  </ItemGroup>
+
+</Project>

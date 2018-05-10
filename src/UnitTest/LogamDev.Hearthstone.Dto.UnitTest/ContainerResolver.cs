@@ -1,6 +1,6 @@
 ﻿using Unity;
 
-namespace LogamDev.Hearthstone.Dto.UnitTest.TestData
+namespace LogamDev.Hearthstone.Dto.UnitTest
 {
     public static class ContainerResolver
     {

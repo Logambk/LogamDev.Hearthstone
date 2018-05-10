@@ -7,7 +7,7 @@ namespace LogamDev.Hearthstone.Services.Event
 {
     public class EventProcessor : IEventProcessor
     {
-        public List<EventBase> ProcessEvent(FullGameState fullState, EventBase ev)
+        public List<EventBase> ProcessEvent(ServerGameState fullState, EventBase ev)
         {
             // TODO: Process the event
             return new List<EventBase> { ev };

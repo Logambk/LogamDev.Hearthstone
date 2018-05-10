@@ -5,6 +5,7 @@ using LogamDev.Hearthstone.Services.Log;
 using LogamDev.Hearthstone.Vo.Event;
 using LogamDev.Hearthstone.Vo.Interaction;
 using LogamDev.Hearthstone.Vo.State;
+using LogamDev.Hearthstone.Vo.Utility;
 
 namespace LogamDev.Hearthstone.Services.Interaction
 {
@@ -16,7 +17,7 @@ namespace LogamDev.Hearthstone.Services.Interaction
             this.logger = logger;
         }
 
-        public List<EventBase> ProcessAttack(FullGameState fullState, InteractionAttack interactionAttack)
+        public List<EventBase> ProcessAttack(ServerGameState fullState, InteractionAttack interactionAttack)
         {
             var me = fullState.Me;
             var opp = fullState.Opp;
@@ -43,7 +44,7 @@ namespace LogamDev.Hearthstone.Services.Interaction
             return events;
         }
 
-        public ValidationResult ValidateAttack(GameState currentState, InteractionAttack attackInteraction)
+        public ValidationResult ValidateAttack(ClientGameState currentState, InteractionAttack attackInteraction)
         {
             //TODO: implement validation
             return new ValidationResult() { IsOk = true };

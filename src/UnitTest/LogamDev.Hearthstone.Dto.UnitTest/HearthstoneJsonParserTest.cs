@@ -5,7 +5,6 @@ using LogamDev.Hearthstone.Dto.Interface;
 using LogamDev.Hearthstone.Dto.UnitTest.TestData;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Unity;
 using Xunit;
 
 namespace LogamDev.Hearthstone.Dto.UnitTest

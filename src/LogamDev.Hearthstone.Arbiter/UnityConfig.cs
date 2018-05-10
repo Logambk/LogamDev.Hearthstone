@@ -1,5 +1,6 @@
 ﻿using LogamDev.Hearthstone.Arbiter.Interface;
 using Unity;
+using Unity.Lifetime;
 
 namespace LogamDev.Hearthstone.Arbiter
 {
@@ -7,7 +8,7 @@ namespace LogamDev.Hearthstone.Arbiter
     {
         public static void Register(IUnityContainer container)
         {
-            container.RegisterType<IGameArbiter, GameArbiter>();
+            container.RegisterType<IGameArbiter, GameArbiter>(new ContainerControlledLifetimeManager());
         }
     }
 }

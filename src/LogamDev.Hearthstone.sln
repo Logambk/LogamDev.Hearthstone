@@ -18,7 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogamDev.Hearthstone.Servic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogamDev.Hearthstone.Arbiter", "LogamDev.Hearthstone.Arbiter\LogamDev.Hearthstone.Arbiter.csproj", "{41BB93ED-9CCC-4F2C-A0A6-AE56CB69775B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogamDev.Hearthstone.Arbiter.UnitTest", "UnitTest\LogamDev.Hearthstone.Arbiter.UnitTest\LogamDev.Hearthstone.Arbiter.UnitTest.csproj", "{25CD0A38-F542-4986-883E-DA6A214BFE31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogamDev.Hearthstone.Arbiter.UnitTest", "UnitTest\LogamDev.Hearthstone.Arbiter.UnitTest\LogamDev.Hearthstone.Arbiter.UnitTest.csproj", "{25CD0A38-F542-4986-883E-DA6A214BFE31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogamDev.Hearthstone.Services.UnitTest", "UnitTest\LogamDev.Hearthstone.Services.UnitTest\LogamDev.Hearthstone.Services.UnitTest.csproj", "{5E281DE0-879C-4DA4-A441-73C252F0AE4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,10 @@ Global
 		{25CD0A38-F542-4986-883E-DA6A214BFE31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25CD0A38-F542-4986-883E-DA6A214BFE31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25CD0A38-F542-4986-883E-DA6A214BFE31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E281DE0-879C-4DA4-A441-73C252F0AE4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E281DE0-879C-4DA4-A441-73C252F0AE4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E281DE0-879C-4DA4-A441-73C252F0AE4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E281DE0-879C-4DA4-A441-73C252F0AE4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,6 +63,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{F8EE3DEA-77C8-48F3-9D43-E302C4846146} = {C29B2AAC-E399-47D7-B5FC-CE3CD0BAADDB}
 		{25CD0A38-F542-4986-883E-DA6A214BFE31} = {C29B2AAC-E399-47D7-B5FC-CE3CD0BAADDB}
+		{5E281DE0-879C-4DA4-A441-73C252F0AE4F} = {C29B2AAC-E399-47D7-B5FC-CE3CD0BAADDB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E7C059CB-0F62-4BD0-9372-5133F3680D13}

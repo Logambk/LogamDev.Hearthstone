@@ -5,6 +5,7 @@ using LogamDev.Hearthstone.Vo.Enum;
 using LogamDev.Hearthstone.Vo.Event;
 using LogamDev.Hearthstone.Vo.Interaction;
 using LogamDev.Hearthstone.Vo.State;
+using LogamDev.Hearthstone.Vo.Utility;
 
 namespace LogamDev.Hearthstone.Services.Interaction
 {
@@ -25,7 +26,7 @@ namespace LogamDev.Hearthstone.Services.Interaction
             endTurnProcessor = new EndTurnProcessor();
         }
 
-        public List<EventBase> ProcessInteraction(FullGameState fullState, InteractionBase interaction)
+        public List<EventBase> ProcessInteraction(ServerGameState fullState, InteractionBase interaction)
         {
             switch (interaction.Type)
             {
@@ -42,7 +43,7 @@ namespace LogamDev.Hearthstone.Services.Interaction
             throw new ArgumentOutOfRangeException("interaction.Type", interaction.Type, "Unsupported interaction type");
         }
 
-        public ValidationResult ValidateInteraction(GameState currentState, InteractionBase interaction)
+        public ValidationResult ValidateInteraction(ClientGameState currentState, InteractionBase interaction)
         {
             switch (interaction.Type)
             {

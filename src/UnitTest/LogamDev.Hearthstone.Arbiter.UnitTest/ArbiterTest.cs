@@ -1,5 +1,4 @@
 using System.IO;
-using System.Linq;
 using FluentAssertions;
 using LogamDev.Hearthstone.Arbiter.Interface;
 using LogamDev.Hearthstone.Dto.Interface;
@@ -24,21 +23,21 @@ namespace LogamDev.Hearthstone.Arbiter.UnitTest
             Services.UnityConfig.Register(container);
 
             var deckParser = container.Resolve<IDeckPlainTextParser>();
-            var library = container.Resolve<ICardLibrary>();
-            var cardNames = deckParser.ParseDeck(File.ReadAllText(Deck1Path));
-            var cards = cardNames.Select(x => library.CollectibleCards.First(card => card.Name == x).Clone()).ToList();
+            var deckConverter = container.Resolve<IDeckConverter>();
+            var deckDto = deckParser.ParseDeck(File.ReadAllText(Deck1Path));
+            var deck = deckConverter.Convert(deckDto);
 
             var playerInitializer1 = new PlayerInitializer()
             {
                 Class = CardClass.Hunter,
-                Deck = cards,
+                Deck = deck,
                 Name = "Player 1"
             };
 
             var playerInitializer2 = new PlayerInitializer()
             {
                 Class = CardClass.Hunter,
-                Deck = cards,
+                Deck = deck,
                 Name = "Player 2"
             };
 

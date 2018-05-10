@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace LogamDev.Hearthstone.Dto.Interface
+﻿namespace LogamDev.Hearthstone.Dto.Interface
 {
     public interface IDeckPlainTextParser
     {
-        List<string> ParseDeck(string text);
+        Deck ParseDeck(string text);
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using LogamDev.Hearthstone.Dto.HearthstoneJson;
-using LogamDev.Hearthstone.Dto.Interface;
+using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Vo.Card;
 
-namespace LogamDev.Hearthstone.Dto
+namespace LogamDev.Hearthstone.Services.Conversion
 {
     public class HearthstoneJsonCardConverter : IHearthstoneJsonCardConverter
     {

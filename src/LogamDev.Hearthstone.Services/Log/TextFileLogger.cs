@@ -9,19 +9,30 @@ namespace LogamDev.Hearthstone.Services.Log
 {
     public class TextFileLogger : ILogger
     {
+        private object logFileLock = new object();
+
+        public TextFileLogger()
+        {
+            lock (logFileLock)
+            {
+                if (File.Exists(Config.LoggingFileName))
+                {
+                    File.Delete(Config.LoggingFileName);
+                }
+            }
+        }
+
         public void Log(LogType type, LogSeverity severity, string message, Dictionary<string, string> data = null)
         {
             if (Config.LoggingIsEnabled)
             {
-                if (!File.Exists(Config.LoggingFileName))
-                {
-                    File.Create(Config.LoggingFileName);
-                }
-
                 var dataStr = data != null ? JsonConvert.SerializeObject(data) : string.Empty;
-                using (var streamWriter = File.AppendText(Config.LoggingFileName))
+                lock (logFileLock)
                 {
-                    streamWriter.WriteLine($"{DateTime.Now} {type} {severity} {message} {dataStr}");
+                    using (var streamWriter = File.AppendText(Config.LoggingFileName))
+                    {
+                        streamWriter.WriteLine($"{DateTime.Now} {type} {severity} {message} {dataStr}");
+                    }
                 }
             }
         }

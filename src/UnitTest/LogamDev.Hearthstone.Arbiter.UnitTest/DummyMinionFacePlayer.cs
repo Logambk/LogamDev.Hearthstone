@@ -9,7 +9,7 @@ namespace LogamDev.Hearthstone.Arbiter.UnitTest
 {
     public class DummyMinionFacePlayer : IUserInteractor
     {
-        private GameState gameState = null;
+        private ClientGameState gameState = null;
 
         public InteractionBase Interact()
         {
@@ -67,7 +67,7 @@ namespace LogamDev.Hearthstone.Arbiter.UnitTest
             return new InteractionEndTurn();
         }
 
-        public void Update(GameState gameState)
+        public void Update(ClientGameState gameState)
         {
             this.gameState = gameState;
         }

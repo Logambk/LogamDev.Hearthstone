@@ -6,6 +6,6 @@ namespace LogamDev.Hearthstone.Services.Interface
 {
     public interface IEventProcessor
     {
-        List<EventBase> ProcessEvent(FullGameState fullState, EventBase ev);
+        List<EventBase> ProcessEvent(ServerGameState fullState, EventBase ev);
     }
 }

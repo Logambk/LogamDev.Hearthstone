@@ -18,13 +18,13 @@ namespace LogamDev.Hearthstone.Arbiter
         private readonly IUserInteractionProcessor userInteractionProcessor;
         private readonly ILogger logger;
         
-        private InternalSide player1State;
-        private InternalSide player2State;
+        private ServerPlayerState player1State;
+        private ServerPlayerState player2State;
         private IUserInteractor playerInteractor1;
         private IUserInteractor playerInteractor2;
         private bool isPlayerOneActive;
 
-        private InternalSide ActivePlayerState
+        private ServerPlayerState ActivePlayerState
         {
             get
             {
@@ -39,7 +39,7 @@ namespace LogamDev.Hearthstone.Arbiter
             }
         }
 
-        private InternalSide PassivePlayerState
+        private ServerPlayerState PassivePlayerState
         {
             get
             {
@@ -128,7 +128,7 @@ namespace LogamDev.Hearthstone.Arbiter
 
             while (internalTurnNumber++ < ruleSet.TurnMaxCountPerGame)
             {
-                var state = new FullGameState()
+                var state = new ServerGameState()
                 {
                     Me = ActivePlayerState,
                     Opp = PassivePlayerState

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using LogamDev.Hearthstone.Services.Interface;
-using LogamDev.Hearthstone.Vo.Card;
 using LogamDev.Hearthstone.Vo.Enum;
+using LogamDev.Hearthstone.Vo.Game;
+using LogamDev.Hearthstone.Vo.Utility;
 
 namespace LogamDev.Hearthstone.Services
 {
@@ -15,7 +16,8 @@ namespace LogamDev.Hearthstone.Services
             this.ruleSet = ruleSet;
         }
 
-        public ValidationResult ValidateDeck(List<CardBase> cards, CardClass cardClass)
+        //TODO: validate format as well
+        public ValidationResult ValidateDeck(Deck deck, CardClass cardClass)
         {
             var validationResult = new ValidationResult()
             {
@@ -23,19 +25,25 @@ namespace LogamDev.Hearthstone.Services
                 Messages = new List<string>()
             };
 
-            if (cards.Count != ruleSet.DeckSize)
+            if (deck.Class != cardClass)
             {
                 validationResult.IsOk = false;
-                validationResult.Messages.Add($"Wrong deck size. Expected {ruleSet.DeckSize}, but found {cards.Count}");
+                validationResult.Messages.Add($"Deck class {deck.Class} doesn't match the hero class {cardClass}");
+            }
+
+            if (deck.Cards.Sum(x => x.Value) != ruleSet.DeckSize)
+            {
+                validationResult.IsOk = false;
+                validationResult.Messages.Add($"Wrong deck size. Expected {ruleSet.DeckSize}, but found {deck.Cards.Sum(x => x.Value)}");
             }
 
             if (cardClass == CardClass.Neutral)
             {
                 validationResult.IsOk = false;
-                validationResult.Messages.Add($"Wrong class. Player cannot have 'Neutral' as a main class");
+                validationResult.Messages.Add($"Wrong class. Player cannot have 'Neutral' as a class");
             }
 
-            var grouppedClasses = cards.Where(x => x.Class != CardClass.Neutral && x.Class != cardClass).GroupBy(x => x.Class);
+            var grouppedClasses = deck.Cards.Keys.Where(x => x.Class != CardClass.Neutral && x.Class != cardClass).GroupBy(x => x.Class);
             if (grouppedClasses.Any())
             {
                 validationResult.IsOk = false;
@@ -43,19 +51,19 @@ namespace LogamDev.Hearthstone.Services
                 validationResult.Messages.Add($"Wrong deck. Expected only cards of {cardClass} and {CardClass.Neutral}, but found other classes: {logData}");
             }
 
-            var groupedLegendaries = cards.Where(x => x.Rarity == CardRarity.Legendary).GroupBy(x => x.DbfId).Where(x => x.Count() > ruleSet.DeckMaxLegendaryCards);
-            if (groupedLegendaries.Any())
+            var legs = deck.Cards.Where(x => x.Key.Rarity == CardRarity.Legendary && x.Value > ruleSet.DeckMaxLegendaryCards);
+            if (legs.Any())
             {
                 validationResult.IsOk = false;
-                var logData = string.Join("; ", groupedLegendaries.Select(x => $"Id: {x.Key}, Count: {x.Count()}"));
+                var logData = string.Join("; ", legs.Select(x => $"Id: {x.Key}, Count: {x.Value}"));
                 validationResult.Messages.Add($"Wrong deck. Expected not more then {ruleSet.DeckMaxLegendaryCards} copy(ies) of Legendary cards. Violation: {logData}");
             }
 
-            var groupedNonLegendaries = cards.Where(x => x.Rarity != CardRarity.Legendary).GroupBy(x => x.DbfId).Where(x => x.Count() > ruleSet.DeckMaxNonLegendaryCards);
-            if (groupedNonLegendaries.Any())
+            var nonLegs = deck.Cards.Where(x => x.Key.Rarity != CardRarity.Legendary && x.Value > ruleSet.DeckMaxNonLegendaryCards);
+            if (nonLegs.Any())
             {
                 validationResult.IsOk = false;
-                var logData = string.Join("; ", groupedNonLegendaries.Select(x => $"Id: {x.Key}, Count: {x.Count()}"));
+                var logData = string.Join("; ", nonLegs.Select(x => $"Id: {x.Key}, Count: {x.Value}"));
                 validationResult.Messages.Add($"Wrong deck. Expected not more then {ruleSet.DeckMaxNonLegendaryCards} copy(ies) of Non-Legendary cards. Violation: {logData}");
             }
 

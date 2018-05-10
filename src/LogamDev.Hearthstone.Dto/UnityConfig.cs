@@ -1,5 +1,6 @@
 ﻿using LogamDev.Hearthstone.Dto.Interface;
 using Unity;
+using Unity.Lifetime;
 
 namespace LogamDev.Hearthstone.Dto
 {
@@ -7,9 +8,8 @@ namespace LogamDev.Hearthstone.Dto
     {
         public static void Register(IUnityContainer container)
         {
-            container.RegisterType<IHearthstoneJsonCardConverter, HearthstoneJsonCardConverter>();
-            container.RegisterType<IHearthstoneJsonCardParser, HearthstoneJsonCardParser>();
-            container.RegisterType<IDeckPlainTextParser, DeckPlainTextParser>();
+            container.RegisterType<IHearthstoneJsonCardParser, HearthstoneJsonCardParser>(new ContainerControlledLifetimeManager());
+            container.RegisterType<IDeckPlainTextParser, DeckPlainTextParser>(new ContainerControlledLifetimeManager());
         }
     }
 }

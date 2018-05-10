@@ -2,7 +2,7 @@
 using LogamDev.Hearthstone.Dto.HearthstoneJson;
 using LogamDev.Hearthstone.Vo.Card;
 
-namespace LogamDev.Hearthstone.Dto.Interface
+namespace LogamDev.Hearthstone.Services.Interface
 {
     public interface IHearthstoneJsonCardConverter
     {

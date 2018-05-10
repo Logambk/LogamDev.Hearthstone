@@ -4,13 +4,16 @@ using LogamDev.Hearthstone.Vo.Game;
 
 namespace LogamDev.Hearthstone.Vo.State
 {
-    public class ExternalSide
+    /// <summary>
+    /// This is how you see the opponent
+    /// </summary>
+    public class ClientOpponentState
     {
-        public Player Player { get; set; }
-        public ManaStorage ManaStorage { get; set; }
-        public List<Minion> Minions { get; set; }
         public int DeckSize { get; set; }
         public int HandSize { get; set; }
+        public ManaStorage Mana { get; set; }
+        public List<Minion> Minions { get; set; }
+        public Player Player { get; set; }
         public Dictionary<int, List<EventBase>> VisibleEvents { get; set; }
     }
 }

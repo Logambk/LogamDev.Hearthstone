@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using LogamDev.Hearthstone.Vo.Card;
-using LogamDev.Hearthstone.Vo.Enum;
+﻿using LogamDev.Hearthstone.Vo.Enum;
+using LogamDev.Hearthstone.Vo.Game;
+using LogamDev.Hearthstone.Vo.Utility;
 
 namespace LogamDev.Hearthstone.Services.Interface
 {
     public interface IDeckValidator
     {
-        ValidationResult ValidateDeck(List<CardBase> cards, CardClass cardClass);
+        ValidationResult ValidateDeck(Deck deck, CardClass cardClass);
     }
 }
