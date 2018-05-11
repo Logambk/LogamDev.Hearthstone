@@ -1,4 +1,5 @@
 ﻿using LogamDev.Hearthstone.Vo.Enum;
+using LogamDev.Hearthstone.Vo.Utility;
 
 namespace LogamDev.Hearthstone.Vo.Event
 {
@@ -11,6 +12,11 @@ namespace LogamDev.Hearthstone.Vo.Event
         {
             Type = type;
             IsHiddenToOpponent = false;
+        }
+
+        public EventFilter GetFilter()
+        {
+            return new EventFilter();
         }
     }
 }

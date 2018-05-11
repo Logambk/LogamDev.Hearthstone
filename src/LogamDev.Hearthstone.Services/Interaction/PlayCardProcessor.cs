@@ -2,10 +2,8 @@
 using System.Linq;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Services.Log;
-using LogamDev.Hearthstone.Vo.Card;
 using LogamDev.Hearthstone.Vo.Enum;
 using LogamDev.Hearthstone.Vo.Event;
-using LogamDev.Hearthstone.Vo.Game;
 using LogamDev.Hearthstone.Vo.Interaction;
 using LogamDev.Hearthstone.Vo.State;
 using LogamDev.Hearthstone.Vo.Utility;
@@ -16,45 +14,29 @@ namespace LogamDev.Hearthstone.Services.Interaction
     {
         private readonly ILogger logger;
         private readonly IRuleSet ruleSet;
-        public PlayCardProcessor(ILogger logger, IRuleSet ruleSet)
+        private readonly IEventProcessor eventProcessor;
+
+        public PlayCardProcessor(ILogger logger, IRuleSet ruleSet, IEventProcessor eventProcessor)
         {
             this.logger = logger;
             this.ruleSet = ruleSet;
+            this.eventProcessor = eventProcessor;
         }
 
         public List<EventBase> ProcessPlayCard(ServerGameState fullState, InteractionPlayCard interactionPlayCard)
         {
             var me = fullState.Me;
             var opp = fullState.Opp;
-            var events = new List<EventBase>();
+            var eventsToProcess = new List<EventBase>();
 
             var card = me.Hand.First(x => x.Id == interactionPlayCard.CardId);
-
             logger.Log(LogType.Services, LogSeverity.Info, $"{me.Player.Name} plays {card.Name} for {card.Cost} mana");
-
             me.Mana.SpendMana(card.Cost);
-
-            //TODO: handle opponent secrets somewhere here
             me.Hand.Remove(card);
-            events.Add(new EventPlayCard() { Dbfid = card.DbfId });
 
-            switch (card.Type)
-            {
-                case CardType.Spell:
-                    break;
-                case CardType.Minion:
-                    var minion = new Minion(card as CardMinion, me.MinionOrderNumber++);
-                    logger.Log(LogType.Services, LogSeverity.Info, $"{minion.Card.Name} is summoned");
-                    me.Minions.Insert(interactionPlayCard.MinionPosition.Value, minion);
-                    events.Add(new EventSummon() { MinionId = minion.Id });
-                    break;
-                case CardType.Weapon:
-                    break;
-                case CardType.Hero:
-                    break;
-            }
-
-            return events;
+            var newEvent = new EventCardPlayed() { Card = card, MinionPosition = interactionPlayCard.MinionPosition };
+            var actualEvents = eventProcessor.ProcessEvent(fullState, newEvent);
+            return actualEvents;
         }
 
         public ValidationResult ValidatePlayCard(ClientGameState state, InteractionPlayCard interactionPlayCard)

@@ -4,6 +4,6 @@ namespace LogamDev.Hearthstone.Vo.Utility
 {
     public class EventFilter
     {
-        public Guid? ChracterId { get; set; }
+        public Guid? Id { get; set; }
     }
 }

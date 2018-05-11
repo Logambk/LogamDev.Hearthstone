@@ -7,6 +7,7 @@ using LogamDev.Hearthstone.Services.Log;
 using LogamDev.Hearthstone.Vo.Event;
 using LogamDev.Hearthstone.Vo.Interaction;
 using LogamDev.Hearthstone.Vo.State;
+using Newtonsoft.Json;
 
 namespace LogamDev.Hearthstone.Arbiter
 {
@@ -83,7 +84,7 @@ namespace LogamDev.Hearthstone.Arbiter
             this.logger = logger;
         }
 
-        public GameResult StartGame(
+        public GameResult HostTheGame(
             PlayerInitializer playerInitializer1,
             PlayerInitializer playerInitializer2,
             IUserInteractor playerInteractor1,
@@ -180,9 +181,10 @@ namespace LogamDev.Hearthstone.Arbiter
 
                     //TODO: send the events to other user
                     var newEvents = userInteractionProcessor.ProcessInteraction(state, interaction);
-                    if (newEvents.Any(x => x is EventPlayerDeath))
+                    if (newEvents.Any(x => x is EventCharacterDied && (x as EventCharacterDied).DiedCharacter == state.Opp.Player.Id))
                     {
                         logger.Log(LogType.Arbiter, LogSeverity.Info, $"{state.Me.Player.Name} Won");
+                        logger.Log(LogType.Arbiter, LogSeverity.Info, $"After Game State: {JsonConvert.SerializeObject(state)}");
 
                         // TODO: find a more approriate way to stop the game
                         return new GameResult()

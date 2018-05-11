@@ -42,7 +42,7 @@ namespace LogamDev.Hearthstone.Arbiter.UnitTest
             };
 
             var arbiter = container.Resolve<IGameArbiter>();
-            var gameResult = arbiter.StartGame(playerInitializer1, playerInitializer2, new DummyMinionFacePlayer(), new DummyMinionFacePlayer());
+            var gameResult = arbiter.HostTheGame(playerInitializer1, playerInitializer2, new DummyMinionFacePlayer(), new DummyMinionFacePlayer());
             gameResult.IsOk.Should().Be(true);
         }
     }

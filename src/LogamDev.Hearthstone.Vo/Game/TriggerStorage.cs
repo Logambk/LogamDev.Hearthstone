@@ -24,7 +24,7 @@ namespace LogamDev.Hearthstone.Vo.Game
             triggers.RemoveAll(x => x.SourceId == sourceId);
         }
 
-        public List<PredicatedEvent> GetAssociatedActions(PredicatedEvent condition)
+        public List<PredicatedEvent> GetAssociatedEvents(PredicatedEvent condition)
         {
             var mappedTriggers = new List<Trigger>();
             foreach (var trigger in triggers)
@@ -32,7 +32,7 @@ namespace LogamDev.Hearthstone.Vo.Game
                 if (condition.Event.Type == trigger.Condition.Event.Type)
                 {
                     // TODO: apply more generic condition checks
-                    if (condition.Filter.ChracterId == trigger.Condition.Filter.ChracterId)
+                    if (condition.Filter.Id == trigger.Condition.Filter.Id)
                     {
                         mappedTriggers.Add(trigger);
                     }

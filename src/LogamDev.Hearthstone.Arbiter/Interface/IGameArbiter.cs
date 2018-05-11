@@ -4,7 +4,7 @@ namespace LogamDev.Hearthstone.Arbiter.Interface
 {
     public interface IGameArbiter
     {
-        GameResult StartGame(
+        GameResult HostTheGame(
             PlayerInitializer playerInitializer1,
             PlayerInitializer playerInitializer2,
             IUserInteractor playerInteractor1,

@@ -2,12 +2,21 @@
 {
     public enum GameEventType
     {
+        CardPlayed,
+        CardDrawn,
+        CardDiscarded,
         CharacterAttacks,
+        CharacterAfterAttack,
         CharacterDealsDamage,
+        CharacterDamaged,
+        CharacterDied,
+        CharacterGotAttacked,
         CharacterHealed,
-        EndOfTurn,
-        PlayCard,
-        PlayerDeath,
-        Summon
+        CharacterSurvivedDamage,
+        ManaSpent,
+        MinionSummoned,
+        TurnAttackPhaseStarted,
+        TurnEnded,
+        TurnStarted
     }
 }

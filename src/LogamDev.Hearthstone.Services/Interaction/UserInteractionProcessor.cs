@@ -17,12 +17,12 @@ namespace LogamDev.Hearthstone.Services.Interaction
         private readonly PlayCardProcessor playCardProcessor;
         private readonly EndTurnProcessor endTurnProcessor;
 
-        public UserInteractionProcessor(IRuleSet ruleSet, ILogger logger)
+        public UserInteractionProcessor(IRuleSet ruleSet, ILogger logger, IEventProcessor eventProcessor)
         {
             this.ruleSet = ruleSet;
             this.logger = logger;
-            attackProcessor = new AttackProcessor(logger);
-            playCardProcessor = new PlayCardProcessor(logger, ruleSet);
+            attackProcessor = new AttackProcessor(eventProcessor);
+            playCardProcessor = new PlayCardProcessor(logger, ruleSet, eventProcessor);
             endTurnProcessor = new EndTurnProcessor();
         }
 

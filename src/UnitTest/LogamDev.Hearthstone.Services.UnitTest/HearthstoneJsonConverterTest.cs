@@ -6,6 +6,7 @@ using LogamDev.Hearthstone.Dto.Interface;
 using LogamDev.Hearthstone.Services.Interface;
 using Newtonsoft.Json.Linq;
 using Unity;
+using Xunit;
 
 namespace LogamDev.Hearthstone.Services.UnitTest
 {
@@ -13,6 +14,7 @@ namespace LogamDev.Hearthstone.Services.UnitTest
     {
         private const string CollectibleCardJsonPath = @"api\cards.collectible.json";
 
+        [Fact]
         public void ShouldConvertAllCollectibleCards()
         {
             var container = new UnityContainer();

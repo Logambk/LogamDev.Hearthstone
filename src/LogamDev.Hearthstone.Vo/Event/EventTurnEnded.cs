@@ -2,9 +2,9 @@
 
 namespace LogamDev.Hearthstone.Vo.Event
 {
-    public class EventPlayerDeath : EventBase
+    public class EventTurnEnded : EventBase
     {
-        public EventPlayerDeath() : base(GameEventType.PlayerDeath)
+        public EventTurnEnded() : base(GameEventType.TurnEnded)
         {
         }
     }

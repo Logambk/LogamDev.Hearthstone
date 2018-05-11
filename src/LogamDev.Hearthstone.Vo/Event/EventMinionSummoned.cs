@@ -3,11 +3,11 @@ using LogamDev.Hearthstone.Vo.Enum;
 
 namespace LogamDev.Hearthstone.Vo.Event
 {
-    public class EventSummon : EventBase
+    public class EventMinionSummoned : EventBase
     {
         public Guid MinionId { get; set; }
 
-        public EventSummon() : base(GameEventType.Summon)
+        public EventMinionSummoned() : base(GameEventType.MinionSummoned)
         {
         }
     }

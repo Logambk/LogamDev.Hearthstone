@@ -5,7 +5,7 @@ namespace LogamDev.Hearthstone.Vo.Event
 {
     public class EventCharacterHealed : EventBase
     {
-        public Guid Healed { get; set; }
+        public Guid HealedCharacter { get; set; }
         public int HealPoints { get; set; }
 
         public EventCharacterHealed() : base(GameEventType.CharacterHealed)

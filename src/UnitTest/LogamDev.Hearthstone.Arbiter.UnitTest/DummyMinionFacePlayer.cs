@@ -42,7 +42,7 @@ namespace LogamDev.Hearthstone.Arbiter.UnitTest
             // go face with minions and with your weapon
             var thisTurnEvents = gameState.Me.Events.Last().Value;
             var attackersThisTurn = thisTurnEvents.Where(x => x.Type == GameEventType.CharacterAttacks).Select(x => (x as EventCharacterAttacks).Attacker).ToList();
-            var minionIdsSummonedThisTurn = thisTurnEvents.Where(x => x.Type == GameEventType.Summon).Select(x => (x as EventSummon).MinionId).ToList();
+            var minionIdsSummonedThisTurn = thisTurnEvents.Where(x => x.Type == GameEventType.MinionSummoned).Select(x => (x as EventMinionSummoned).MinionId).ToList();
             var yourMinionWhichCanAttack = gameState.Me.Minions.Where(x => !minionIdsSummonedThisTurn.Contains(x.Id) && !attackersThisTurn.Contains(x.Id)).ToList();
             if (yourMinionWhichCanAttack.Any())
             {
