@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Services.Log;
 using LogamDev.Hearthstone.Vo.Event;
@@ -18,35 +17,33 @@ namespace LogamDev.Hearthstone.Services.Event
             this.eventProcessor = eventProcessor;
         }
 
-        public List<EventBase> ProcessAttack(ServerGameState state, EventCharacterAttacks eventAttack)
+        public void ProcessAttack(ServerGameState state, EventCharacterAttacks eventAttack)
         {
             // TODO: Process other types of attack (only Minion -> Player attacks are supported the moment)
-            var passedEvents = new List<EventBase>();
-
             if (!IsAttackStillValid(state, eventAttack))
             {
-                return passedEvents;
+                return;
             }
 
             // 1. Attack
-            passedEvents.Add(eventAttack);
+            state.Me.LastTurnEvents.Add(eventAttack);
 
             // 2. Got Attacked
             var characterGotAttackedEvent = new EventCharacterGotAttacked() { Attacked = eventAttack.Attacked, Attacker = eventAttack.Attacker };
-            passedEvents.AddRange(eventProcessor.ProcessEvent(state, characterGotAttackedEvent));
+            eventProcessor.ProcessEvent(state, characterGotAttackedEvent);
 
             if (!IsAttackStillValid(state, eventAttack))
             {
-                return passedEvents;
+                return;
             }
 
             // 3. Deal Damage
             var characterDealsDamageEvent = new EventCharacterDealsDamage() { Damaged = eventAttack.Attacked, Damager = eventAttack.Attacker };
-            passedEvents.AddRange(eventProcessor.ProcessEvent(state, characterDealsDamageEvent));
+            eventProcessor.ProcessEvent(state, characterDealsDamageEvent);
 
             if (!IsAttackStillValid(state, eventAttack))
             {
-                return passedEvents;
+                return;
             }
 
             //TODO: process it inside EventCharacterDealsDamage
@@ -56,7 +53,7 @@ namespace LogamDev.Hearthstone.Services.Event
             // 4 Got Damaged
             //TODO: check if the damage event actually happened and was not somehow nullified
             var characterDamagedEvent = new EventCharacterDamaged() { Damaged = eventAttack.Attacked, Damager = eventAttack.Attacker };
-            passedEvents.AddRange(eventProcessor.ProcessEvent(state, characterDamagedEvent));
+            eventProcessor.ProcessEvent(state, characterDamagedEvent);
 
             //TODO: process it inside EventCharacterDamaged
             state.Opp.Player.Health -= attackingMinion.Attack;
@@ -66,19 +63,17 @@ namespace LogamDev.Hearthstone.Services.Event
             if (state.Opp.Player.Health <= 0)
             {
                 var charactedDiedEvent = new EventCharacterDied() { DiedCharacter = eventAttack.Attacked };
-                passedEvents.AddRange(eventProcessor.ProcessEvent(state, charactedDiedEvent));
+                eventProcessor.ProcessEvent(state, charactedDiedEvent);
             }
             else
             {
                 var characterSurvivedDamage = new EventCharacterSurvivedDamage();
-                passedEvents.AddRange(eventProcessor.ProcessEvent(state, characterSurvivedDamage));
+                eventProcessor.ProcessEvent(state, characterSurvivedDamage);
             }
 
             // 6. After Attack Event
             var afterAttackEvent = new EventCharacterAfterAttack();
-            passedEvents.AddRange(eventProcessor.ProcessEvent(state, afterAttackEvent));
-
-            return passedEvents;
+            eventProcessor.ProcessEvent(state, afterAttackEvent);
         }
 
         private bool IsAttackStillValid(ServerGameState state, EventCharacterAttacks eventAttack)

@@ -180,8 +180,8 @@ namespace LogamDev.Hearthstone.Arbiter
                     }
 
                     //TODO: send the events to other user
-                    var newEvents = userInteractionProcessor.ProcessInteraction(state, interaction);
-                    if (newEvents.Any(x => x is EventCharacterDied && (x as EventCharacterDied).DiedCharacter == state.Opp.Player.Id))
+                    userInteractionProcessor.ProcessInteraction(state, interaction);
+                    if (state.Me.LastTurnEvents.Any(x => x is EventCharacterDied && (x as EventCharacterDied).DiedCharacter == state.Opp.Player.Id))
                     {
                         logger.Log(LogType.Arbiter, LogSeverity.Info, $"{state.Me.Player.Name} Won");
                         logger.Log(LogType.Arbiter, LogSeverity.Info, $"After Game State: {JsonConvert.SerializeObject(state)}");
@@ -190,7 +190,8 @@ namespace LogamDev.Hearthstone.Arbiter
                         return new GameResult()
                         {
                             IsOk = true,
-                            IsFirstPlayerWon = isPlayerOneActive
+                            IsFirstPlayerWon = isPlayerOneActive,
+                            FinalState = state
                         };
                     }
 

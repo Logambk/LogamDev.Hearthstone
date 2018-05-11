@@ -23,11 +23,10 @@ namespace LogamDev.Hearthstone.Services.Interaction
             this.eventProcessor = eventProcessor;
         }
 
-        public List<EventBase> ProcessPlayCard(ServerGameState fullState, InteractionPlayCard interactionPlayCard)
+        public void ProcessPlayCard(ServerGameState fullState, InteractionPlayCard interactionPlayCard)
         {
             var me = fullState.Me;
             var opp = fullState.Opp;
-            var eventsToProcess = new List<EventBase>();
 
             var card = me.Hand.First(x => x.Id == interactionPlayCard.CardId);
             logger.Log(LogType.Services, LogSeverity.Info, $"{me.Player.Name} plays {card.Name} for {card.Cost} mana");
@@ -35,8 +34,7 @@ namespace LogamDev.Hearthstone.Services.Interaction
             me.Hand.Remove(card);
 
             var newEvent = new EventCardPlayed() { Card = card, MinionPosition = interactionPlayCard.MinionPosition };
-            var actualEvents = eventProcessor.ProcessEvent(fullState, newEvent);
-            return actualEvents;
+            eventProcessor.ProcessEvent(fullState, newEvent);
         }
 
         public ValidationResult ValidatePlayCard(ClientGameState state, InteractionPlayCard interactionPlayCard)

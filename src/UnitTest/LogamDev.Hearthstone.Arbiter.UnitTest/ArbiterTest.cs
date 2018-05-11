@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using FluentAssertions;
 using LogamDev.Hearthstone.Arbiter.Interface;
 using LogamDev.Hearthstone.Dto.Interface;
@@ -44,6 +45,8 @@ namespace LogamDev.Hearthstone.Arbiter.UnitTest
             var arbiter = container.Resolve<IGameArbiter>();
             var gameResult = arbiter.HostTheGame(playerInitializer1, playerInitializer2, new DummyMinionFacePlayer(), new DummyMinionFacePlayer());
             gameResult.IsOk.Should().Be(true);
+            var playerOneTurns = gameResult.FinalState.Me.Events.Last().Key;
+            playerOneTurns.Should().BeGreaterThan(5);
         }
     }
 }

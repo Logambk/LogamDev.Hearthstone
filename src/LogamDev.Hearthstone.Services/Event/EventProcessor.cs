@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Services.Log;
@@ -29,24 +28,27 @@ namespace LogamDev.Hearthstone.Services.Event
         /// <param name="state"></param>
         /// <param name="ev"></param>
         /// <returns>Returned events are already processed ones</returns>
-        public List<EventBase> ProcessEvent(ServerGameState state, EventBase ev)
+        public void ProcessEvent(ServerGameState state, EventBase ev)
         {
             logger.Log(LogType.Services, LogSeverity.Info, $"Processing event {ev.ToString()}");
 
-            var triggeredEvents = CheckTriggers(state, ev);
+            CheckTriggers(state, ev);
 
+            //TODO: support other events
             switch (ev.Type)
             {
                 case GameEventType.CardPlayed:
-                    return ProcessPlayCard(state, ev as EventCardPlayed);
+                    ProcessPlayCard(state, ev as EventCardPlayed);
+                    return;
                 case GameEventType.CharacterAttacks:
-                    return attackProcessor.ProcessAttack(state, ev as EventCharacterAttacks);
+                    attackProcessor.ProcessAttack(state, ev as EventCharacterAttacks);
+                    return;
             }
 
-            return new List<EventBase> { ev };
+            state.Me.LastTurnEvents.Add(ev);
         }
 
-        private List<EventBase> CheckTriggers(ServerGameState state, EventBase ev)
+        private void CheckTriggers(ServerGameState state, EventBase ev)
         {
             var myEventFilter = new PredicatedEvent()
             {
@@ -72,16 +74,13 @@ namespace LogamDev.Hearthstone.Services.Event
                 // TODO: re-call ProcessEvent() for each triggered event and return the resulting events
                 throw new NotImplementedException();
             }
-
-            return new List<EventBase>();
         }
 
         #region TODO: move it out
 
-        private List<EventBase> ProcessPlayCard(ServerGameState state, EventCardPlayed playCardEvent)
+        private void ProcessPlayCard(ServerGameState state, EventCardPlayed playCardEvent)
         {
-            var events = new List<EventBase>();
-            events.Add(playCardEvent);
+            state.Me.LastTurnEvents.Add(playCardEvent);
 
             var card = playCardEvent.Card;
             switch (card.Type)
@@ -92,15 +91,13 @@ namespace LogamDev.Hearthstone.Services.Event
                     var minion = new Minion(card as CardMinion, state.Me.MinionOrderNumber++);
                     logger.Log(LogType.Services, LogSeverity.Info, $"{minion.Card.Name} is summoned");
                     state.Me.Minions.Insert(playCardEvent.MinionPosition.Value, minion);
-                    events.AddRange(ProcessEvent(state, new EventMinionSummoned() { MinionId = minion.Id }));
+                    ProcessEvent(state, new EventMinionSummoned() { MinionId = minion.Id });
                     break;
                 case CardType.Weapon:
                     break;
                 case CardType.Hero:
                     break;
             }
-
-            return events;
         }
 
         #endregion

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using LogamDev.Hearthstone.Services.Interface;
+﻿using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Vo.Event;
 using LogamDev.Hearthstone.Vo.Interaction;
 using LogamDev.Hearthstone.Vo.State;
@@ -16,11 +15,10 @@ namespace LogamDev.Hearthstone.Services.Interaction
             this.eventProcessor = eventProcessor;
         }
 
-        public List<EventBase> ProcessAttack(ServerGameState fullState, InteractionAttack interactionAttack)
+        public void ProcessAttack(ServerGameState fullState, InteractionAttack interactionAttack)
         {
             var newEvent = new EventCharacterAttacks() { Attacker = interactionAttack.Attacker, Attacked = interactionAttack.Target };
-            var actualEvents = eventProcessor.ProcessEvent(fullState, newEvent);
-            return actualEvents;
+            eventProcessor.ProcessEvent(fullState, newEvent);
         }
 
         public ValidationResult ValidateAttack(ClientGameState currentState, InteractionAttack attackInteraction)

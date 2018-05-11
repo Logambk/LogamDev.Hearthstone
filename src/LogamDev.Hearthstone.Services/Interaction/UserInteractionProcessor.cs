@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using LogamDev.Hearthstone.Services.Interface;
 using LogamDev.Hearthstone.Vo.Enum;
-using LogamDev.Hearthstone.Vo.Event;
 using LogamDev.Hearthstone.Vo.Interaction;
 using LogamDev.Hearthstone.Vo.State;
 using LogamDev.Hearthstone.Vo.Utility;
@@ -26,18 +25,21 @@ namespace LogamDev.Hearthstone.Services.Interaction
             endTurnProcessor = new EndTurnProcessor();
         }
 
-        public List<EventBase> ProcessInteraction(ServerGameState fullState, InteractionBase interaction)
+        public void ProcessInteraction(ServerGameState fullState, InteractionBase interaction)
         {
             switch (interaction.Type)
             {
                 case InteractionType.Attack:
-                    return attackProcessor.ProcessAttack(fullState, interaction as InteractionAttack);
+                    attackProcessor.ProcessAttack(fullState, interaction as InteractionAttack);
+                    return;
 
                 case InteractionType.PlayCard:
-                    return playCardProcessor.ProcessPlayCard(fullState, interaction as InteractionPlayCard);
+                    playCardProcessor.ProcessPlayCard(fullState, interaction as InteractionPlayCard);
+                    return;
 
                 case InteractionType.EndTurn:
-                    return endTurnProcessor.ProcessEndTurn(fullState, interaction as InteractionEndTurn);
+                    endTurnProcessor.ProcessEndTurn(fullState, interaction as InteractionEndTurn);
+                    return;
             }
 
             throw new ArgumentOutOfRangeException("interaction.Type", interaction.Type, "Unsupported interaction type");

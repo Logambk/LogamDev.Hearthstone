@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using LogamDev.Hearthstone.Vo.Card;
 using LogamDev.Hearthstone.Vo.Event;
 using LogamDev.Hearthstone.Vo.Game;
@@ -19,5 +20,14 @@ namespace LogamDev.Hearthstone.Vo.State
         public TriggerStorage Triggers { get; set; }
         public int MinionOrderNumber { get; set; }
         public Dictionary<int, List<EventBase>> Events { get; set; }
+
+        public List<EventBase> LastTurnEvents
+        {
+            get
+            {
+                var lastTurn = Events.Keys.Max();
+                return Events[lastTurn];
+            }
+        }
     }
 }
